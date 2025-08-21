@@ -10,11 +10,17 @@ import { onLoad } from '@dcloudio/uni-app'
 import TeamStyle from '@/components/TeamStyle.vue'
 import type { TeamItem } from '@/types/Team'
 import { teamStudyListGetApi } from '@/api/team.ts'
+import PageSkeleton from '@/pages/home/components/PageSkeleton.vue'
+import { useActivityStore } from '@/stores/modules/activity.ts'
+
+// 活动列表
+const activityStore = useActivityStore()
 
 // 产品列表
 const productList = ref<ProductItem[]>([])
 const productListGet = async () => {
-  const res = await productListGetApi()
+  const res = await productListGetApi(1, 8, '')
+  console.log('首页', res)
   productList.value = res.data.list.slice(0, 4)
 }
 
@@ -25,9 +31,12 @@ const teamListGet = async () => {
   teamList.value = res.data.list
 }
 
+const isLoading = ref(false)
 // 获取数据后调用
 onLoad(async () => {
-  await Promise.all([productListGet(), teamListGet()])
+  isLoading.value = true
+  await Promise.all([activityStore.activityListGet(), productListGet(), teamListGet()])
+  isLoading.value = false
 })
 </script>
 
@@ -35,13 +44,16 @@ onLoad(async () => {
   <view class="homePages">
     <!--  自定义导航  -->
     <CustomNav></CustomNav>
-    <scroll-view class="scrollView" :scroll-y="true">
-      <!-- banner   -->
-      <Banner></Banner>
-      <!--  产品预览区域  -->
-      <ProductList :list="productList"></ProductList>
-      <!--   员工风采   -->
-      <TeamStyle :list="teamList"></TeamStyle>
+    <scroll-view class="scrollView" :scroll-y="true" :enhanced="true" :show-scrollbar="false">
+      <PageSkeleton v-if="isLoading"></PageSkeleton>
+      <template v-else>
+        <!-- banner   -->
+        <Banner :list="activityStore.activityList"></Banner>
+        <!--  产品预览区域  -->
+        <ProductList :list="productList"></ProductList>
+        <!--   员工风采   -->
+        <TeamStyle :list="teamList"></TeamStyle>
+      </template>
     </scroll-view>
   </view>
 </template>

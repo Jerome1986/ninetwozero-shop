@@ -10,12 +10,17 @@ export const useUserStore = defineStore(
     const DEFAULT_INFO = ref<UserItem>({
       nickname: '',
       _id: '',
-      avatarUrl: '',
-      mobile: '',
+      avatarUrl:
+        'https://objectstorageapi.gzg.sealos.run/dxepxlzz-sealaf-h91gpva7y7-cloud-bin/test-product/defaultAvatar.png',
+      mobile: '点击登录',
       gender: 1,
       role: 'user',
       registerTime: '',
       status: '',
+      vipLevel: 0, // 1:基础会员, 2:高级会员, 3:至尊会员
+      vipStartTime: '', // 会员注册时间
+      vipEndTime: '', // 会员到期时间
+      vipBenefits: [], // ['折扣9折', '免费配送']
     })
 
     // 会员信息

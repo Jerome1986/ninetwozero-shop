@@ -27,3 +27,18 @@ export const formatGender = (gender: number) => {
       return '未知'
   }
 }
+
+// 角色转换
+export const formatRole = (role: string, vipLevel: number = 0): string => {
+  const vipMap: Record<number, string> = {
+    1: '银牌会员',
+    2: '金牌会员',
+    3: '至尊会员',
+  }
+
+  if (role === 'user') return '普通用户'
+  if (role === 'vip') return vipMap[vipLevel] || '会员'
+  if (role === 'admin') return '管理员'
+
+  return '未知角色'
+}

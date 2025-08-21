@@ -42,12 +42,25 @@
       "style": {
         "navigationBarTitleText": "登录"
       }
+    },
+    {
+      "path": "pages/phoneFilm/phoneFilm",
+      "style": {
+        "navigationBarTitleText": "产品列表"
+      }
+    },
+    {
+      "path": "pages/productDetail/productDetail",
+      "style": {
+        "navigationBarTitleText": "产品详情",
+        "enablePullDownRefresh": false
+      }
     }
   ],
   "globalStyle": {
-    "navigationBarTextStyle": "black",
+    "navigationBarTextStyle": "white",
     "navigationBarTitleText": "",
-    "navigationBarBackgroundColor": "#F8F8F8",
+    "navigationBarBackgroundColor": "#d62731",
     "backgroundColor": "#F8F8F8"
   },
   // 设置 TabBar
@@ -82,5 +95,38 @@
         "selectedIconPath": "static/tabs/my_selected.png"
       }
     ]
+  },
+  "subPackages": [
+    {
+      // 子包的根目录
+      "root": "pagesMember",
+      // 页面路径和窗口表现
+      "pages": [
+        {
+          "path": "setting/setting",
+          "style": {
+            "navigationBarTitleText": "设置",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "profile/profile",
+          "style": {
+            "navigationBarTitleText": "个人资料",
+            "enablePullDownRefresh": false
+          }
+        }
+      ]
+    }
+  ],
+  // 分包预下载规则
+  "preloadRule": {
+    "pages/my/my": {
+      "network": "all",
+      // [!code ++]
+      "packages": [
+        "pagesMember"
+      ]
+    }
   }
 }

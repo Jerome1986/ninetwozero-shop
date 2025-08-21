@@ -1,14 +1,16 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import type { ActivityItem } from '@/types/ActivityItem'
+
+defineProps({
+  list: Array as () => ActivityItem[],
+})
+</script>
 
 <template>
   <view class="banner">
     <swiper :circular="true" :autoplay="true">
-      <swiper-item class="bannerItem">
-        <image
-          src="https://objectstorageapi.gzg.sealos.run/dxepxlzz-sealaf-h91gpva7y7-cloud-bin/banner1.jpg"
-          mode="aspectFill"
-          :lazy-load="true"
-        ></image>
+      <swiper-item class="bannerItem" v-for="item in list" :key="item._id">
+        <image class="bannerImg" :src="item.cover" mode="scaleToFill" :lazy-load="true"></image>
       </swiper-item>
     </swiper>
   </view>
@@ -25,7 +27,7 @@
     height: 304rpx;
 
     .bannerItem {
-      image {
+      .bannerImg {
         width: 100%;
         height: 100%;
       }

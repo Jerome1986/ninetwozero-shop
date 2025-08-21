@@ -9,3 +9,7 @@ export type PageResult<T> = {
   /** 总页数 */
   totalPages: number
 }
+
+export type UpdateResult = {
+  acknowledged: boolean
+}

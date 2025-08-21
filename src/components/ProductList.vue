@@ -19,6 +19,13 @@ const leftList = computed(() => {
 const rightList = computed(() => {
   return props.list.filter((_, index) => index % 2 === 1)
 })
+
+// 处理点击跳转
+const handleItem = (productId: string) => {
+  uni.navigateTo({
+    url: `/pages/productDetail/productDetail?productId=${productId}&cateType=1`,
+  })
+}
 </script>
 
 <template>
@@ -28,15 +35,15 @@ const rightList = computed(() => {
   <view class="preview">
     <!-- 左列 -->
     <view class="column">
-      <view class="item" v-for="item in leftList" :key="item._id">
-        <image :src="item.cover" mode="widthFix"></image>
+      <view class="item" v-for="item in leftList" :key="item._id" @click="handleItem(item._id)">
+        <image class="coverImg" :src="item.cover" mode="widthFix"></image>
       </view>
     </view>
 
     <!-- 右列 -->
     <view class="column">
-      <view class="item" v-for="item in rightList" :key="item._id">
-        <image :src="item.cover" mode="widthFix"></image>
+      <view class="item" v-for="item in rightList" :key="item._id" @click="handleItem(item._id)">
+        <image class="coverImg" :src="item.cover" mode="widthFix"></image>
       </view>
     </view>
   </view>
@@ -54,7 +61,7 @@ const rightList = computed(() => {
     .item {
       margin-bottom: 16rpx;
 
-      image {
+      .coverImg {
         width: 100%;
         display: block;
         border-radius: 16rpx;

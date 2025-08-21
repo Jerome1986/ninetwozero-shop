@@ -18,4 +18,12 @@ export type UserItem = {
   registerTime: string
   /** 账号状态 - active激活 inactive未激活 */
   status: string
+  /**  会员等级： 1:基础会员, 2:高级会员, 3:至尊会员 */
+  vipLevel: number
+  /** 会员注册时间 */
+  vipStartTime: string
+  /** 会员到期时间 */
+  vipEndTime: string
+  /** 会员权益： ['折扣9折', '免费配送'] */
+  vipBenefits: string[]
 }

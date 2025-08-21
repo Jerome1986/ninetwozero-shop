@@ -1,11 +1,29 @@
 <script setup lang="ts">
-defineProps({
+const props = defineProps({
   title: {
     type: String,
     required: true,
     default: '标题',
   },
+  isMore: {
+    type: Boolean,
+    default: true,
+  },
 })
+
+// 处理点击更多
+const handleMore = () => {
+  switch (props.title) {
+    case '产品信息':
+      uni.switchTab({
+        url: '/pages/shop/shop',
+      })
+      break
+    case '团队风采':
+      console.log('跳转团队活动')
+      break
+  }
+}
 </script>
 
 <template>
@@ -16,7 +34,7 @@ defineProps({
       <!--  文字  -->
       <view class="text">{{ title }}</view>
     </view>
-    <view class="right">
+    <view class="right" v-if="isMore" @click="handleMore">
       <text>更多</text>
       <text style="font-size: 20rpx; margin-left: 8rpx" class="iconfont icon-bianzu"></text>
     </view>
