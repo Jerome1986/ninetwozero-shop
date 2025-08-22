@@ -1,19 +1,39 @@
 <script setup lang="ts">
 //获取安全距离
+import { useUserStore } from '@/stores'
+
 const { safeAreaInsets } = uni.getSystemInfoSync()
 
 defineProps<{
   cateType: string | number
 }>()
 
+// 定义store
+const userStore = useUserStore()
+// 店长验证函数
+const managerVerification = () => {
+  if (userStore.profile.role !== 'manager') {
+    return uni.showModal({
+      title: '提示',
+      content: '仅供员工使用',
+      showCancel: false,
+      confirmColor: '#d62731',
+    })
+  }
+}
+
 // 加入库存
 const addCart = () => {
   console.log('addCart')
+  // 1.验证身份
+  managerVerification()
 }
 
 // 立即添加
 const buyNow = () => {
   console.log('buyNow')
+  // 1.验证身份
+  managerVerification()
 }
 
 // 处理我想要
@@ -30,11 +50,11 @@ const handleWant = () => {
     v-if="cateType === 1 || cateType === '1'"
   >
     <view class="icons">
-      <button class="icons-button">
+      <button class="icons-button" open-type="contact">
         <text class="iconfont icon-kefu"></text>
         客服
       </button>
-      <navigator class="icons-button" url="/pages/shop/shop" open-type="switchTab">
+      <navigator class="icons-button" url="/pages/warehouse/warehouse" open-type="switchTab">
         <text class="iconfont icon-a-ziyuan1"></text>
         <!-- 当前购物车数量 -->
         <!--        <text class="cratNum" v-if="cartStore.cartList.length">-->

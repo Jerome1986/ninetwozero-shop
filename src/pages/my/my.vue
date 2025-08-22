@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useUserStore } from '@/stores'
 import VipCard from '@/pages/my/components/VipCard.vue'
 import NavGrid from '@/pages/my/components/NavGrid.vue'
 import NavTitle from '@/components/NavTitle.vue'
+import { useUserStore } from '@/stores'
 import { formatRole } from '@/utils/formatTimestamp.ts'
 import { useActivityStore } from '@/stores/modules/activity.ts'
 import { onLoad } from '@dcloudio/uni-app'
