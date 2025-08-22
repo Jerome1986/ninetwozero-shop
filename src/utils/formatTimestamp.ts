@@ -3,6 +3,7 @@ export function padZero(num: any) {
   return num < 10 ? '0' + num : num
 }
 
+// 格式化时间
 export function formatTimestamp(timestamp: any) {
   const date = new Date(timestamp)
   const year = date.getFullYear()
@@ -38,6 +39,7 @@ export const formatRole = (role: string, vipLevel: number = 0): string => {
 
   if (role === 'user') return '普通用户'
   if (role === 'vip') return vipMap[vipLevel] || '会员'
+  if (role === 'manager') return '店长'
   if (role === 'admin') return '管理员'
 
   return '未知角色'

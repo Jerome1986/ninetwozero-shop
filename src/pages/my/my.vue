@@ -26,6 +26,24 @@ const options = () => {
   })
 }
 
+// 处理表单跳转
+const handleForm = (fromType: string) => {
+  console.log(fromType)
+  switch (fromType) {
+    case 'hire':
+      // todo 跳转验证
+
+      // 跳转
+      uni.navigateTo({
+        url: '/pages/hireForm/hireForm',
+      })
+      break
+    case 'cooperate':
+      console.log('cooperate')
+      break
+  }
+}
+
 onLoad(() => activityStore.activityListGet())
 </script>
 
@@ -66,10 +84,10 @@ onLoad(() => activityStore.activityListGet())
 
       <!--   报名申请   -->
       <view class="signUp">
-        <view class="item">
+        <view class="item" @click="handleForm('hire')">
           <image class="img" src="/static/images/yuanggong.png" mode="widthFix"></image>
         </view>
-        <view class="item">
+        <view class="item" @click="handleForm('cooperate')">
           <image class="img" src="/static/images/hezuo.png" mode="widthFix"></image>
         </view>
       </view>

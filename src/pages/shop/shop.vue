@@ -6,7 +6,7 @@ import GlobalProductBar from '@/components/GlobalProductBar.vue'
 
 import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
-import type { BrandModeItem, CateItem, PhoneItem } from '@/types/CateItem.ts'
+import type { BrandModeItem, CateItem, PhoneItem } from '@/types/CateItem'
 import { brandListGetApi, cateGetApi, phoneListGetApi } from '@/api/cate.ts'
 import type { GiftItem } from '@/types/GiftItem'
 import { giftListGetApi } from '@/api/gift.ts'
