@@ -6,6 +6,8 @@ import { useUserStore } from '@/stores'
 import { formatRole } from '@/utils/formatTimestamp.ts'
 import { useActivityStore } from '@/stores/modules/activity.ts'
 import { onLoad } from '@dcloudio/uni-app'
+import { checkedHireApi } from '@/api/hire.ts'
+import { cooperateCheckApi } from '@/api/cooperate.ts'
 
 // 定义 store
 const userStore = useUserStore()
@@ -27,19 +29,28 @@ const options = () => {
 }
 
 // 处理表单跳转
-const handleForm = (fromType: string) => {
-  console.log(fromType)
+const handleForm = async (fromType: string) => {
+  //  员工招聘跳转验证-如果用户提交过，则拒绝跳转
+  const hireRes = await checkedHireApi(userStore.profile._id)
+  let hireCheck = hireRes.data
+  //  合作申请验证
+  const cooperateRes = await cooperateCheckApi(userStore.profile._id)
+  let cooperateCheck = cooperateRes.data
+
+  // 处理跳转
   switch (fromType) {
     case 'hire':
-      // todo 跳转验证
-
+      if (hireCheck) return uni.showToast({ icon: 'none', title: '请勿重复提交' })
       // 跳转
-      uni.navigateTo({
+      await uni.navigateTo({
         url: '/pages/hireForm/hireForm',
       })
       break
     case 'cooperate':
-      console.log('cooperate')
+      if (cooperateCheck) return uni.showToast({ icon: 'none', title: '请勿重复提交' })
+      await uni.navigateTo({
+        url: '/pages/cooperateForm/cooperateForm',
+      })
       break
   }
 }

@@ -24,3 +24,16 @@ export const hireAddApi = (
     data: { userId, name, mobile, icCardFont, icCardBack },
   })
 }
+
+/**
+ * 根据用户id查询是否申请过员工招聘
+ * /hire/check
+ */
+
+export const checkedHireApi = (userId: string) => {
+  return request<boolean>({
+    method: 'GET',
+    url: '/hire/check',
+    data: { userId },
+  })
+}

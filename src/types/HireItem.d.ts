@@ -1,4 +1,4 @@
-export type HireItem = {
+export type FormItem = {
   /** 用户id */
   userId: string
   /** 名字 */
@@ -9,4 +9,6 @@ export type HireItem = {
   icCardFont: string
   /** 身份证反面 */
   icCardBack: string
+  /** 营业执照 */
+  business?: string
 }

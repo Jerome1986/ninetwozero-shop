@@ -26,6 +26,7 @@ const handleLogin = (e: GetPhoneNumberEvent) => {
   uni.login({
     // 获取code成功
     success: async (res) => {
+      console.log('登录', res)
       if (!res.code) {
         await uni.showToast({
           icon: 'none',

@@ -1,12 +1,13 @@
 <script setup lang="ts">
+import UpdateFIle from '@/components/UpdateFIle.vue'
 import { ref } from 'vue'
 import type { FormItem } from '@/types/HireItem'
 import { validateForm } from '@/utils/validate'
 import { useUserStore } from '@/stores'
-import { hireAddApi } from '@/api/hire'
 import { updateImg } from '@/composables/updateImg'
-import UpdateFIle from '@/components/UpdateFIle.vue'
+import { cooperateAddApi } from '@/api/cooperate.ts'
 
+// 获取系统安全范围
 const { safeAreaInsets } = uni.getSystemInfoSync()
 
 // 定义store
@@ -19,6 +20,7 @@ const form = ref<FormItem>({
   mobile: '',
   icCardFont: '',
   icCardBack: '',
+  business: '',
 })
 
 // 处理子组件上传
@@ -29,7 +31,7 @@ const handleUpdate = (type: string) => {
 const isSubmitting = ref(false)
 
 // 提交
-const handleSubmit = async (): Promise<void> => {
+const handleSubmit = async () => {
   console.log('提交', form.value)
 
   // 用户身份验证
@@ -58,12 +60,13 @@ const handleSubmit = async (): Promise<void> => {
       mask: true,
     })
 
-    const res = await hireAddApi(
+    const res = await cooperateAddApi(
       form.value.userId,
       form.value.name,
       form.value.mobile,
       form.value.icCardFont,
       form.value.icCardBack,
+      form.value.business,
     )
 
     console.log('提交结果', res)
@@ -102,7 +105,7 @@ const handleSubmit = async (): Promise<void> => {
 </script>
 
 <template>
-  <view class="hireForm">
+  <view class="cooperateForm">
     <view class="form">
       <!-- 信息区域 -->
       <view class="info">
@@ -125,6 +128,8 @@ const handleSubmit = async (): Promise<void> => {
       <UpdateFIle
         :ic-card-font="form.icCardFont"
         :ic-card-back="form.icCardBack"
+        :business="form.business"
+        :is-cooperate="true"
         @update="handleUpdate"
       ></UpdateFIle>
       <!-- 提交按钮 -->
@@ -136,10 +141,14 @@ const handleSubmit = async (): Promise<void> => {
 </template>
 
 <style scoped lang="scss">
-.hireForm {
-  padding: 24rpx;
+.cooperateForm {
+  height: 100%;
+  padding: 24rpx 24rpx 170rpx;
 
   .form {
+    height: 100%;
+    overflow: auto;
+
     /*文字信息区域*/
     .info {
       padding: 24rpx;

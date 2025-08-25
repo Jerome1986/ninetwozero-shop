@@ -1,7 +1,7 @@
 import { extractFilenameFromUrl } from '@/utils/extractFilename'
-import type { HireItem } from '@/types/HireItem'
+import type { FormItem } from '@/types/HireItem'
 
-export const updateImg = (form: HireItem, type: string) => {
+export const updateImg = (form: FormItem, type: string) => {
   uni.chooseImage({
     success: async (e) => {
       const url = e.tempFilePaths[0]
@@ -18,6 +18,7 @@ export const updateImg = (form: HireItem, type: string) => {
           // 可以记录后端返回的地址（永久地址）
           if (type === 'font') return (form.icCardFont = res.data)
           if (type === 'back') return (form.icCardBack = res.data)
+          if (type === 'business') return (form.business = res.data)
         },
         fail: (err) => {
           console.error('上传失败', err)

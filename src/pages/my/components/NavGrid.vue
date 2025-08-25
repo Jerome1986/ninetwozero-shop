@@ -1,15 +1,46 @@
 <script setup lang="ts">
+import { useUserStore } from '@/stores'
+
+// 定义store
+const userStore = useUserStore()
+
 const data = [
-  { icon: 'icon-shouyi1', name: '我的收益' },
+  { icon: 'icon-shouyi1', name: '我的账单' },
   { icon: 'icon-shenqing1', name: '我的申请' },
   { icon: 'icon-tuijian1', name: '我的推荐' },
   { icon: 'icon-huiyuan', name: '会员权益' },
 ]
+
+// 处理功能区域
+const handleGrid = (val: string) => {
+  // 检查用户是否登录
+  if (!userStore.profile._id)
+    return uni.showToast({ icon: 'none', title: '登录后可查看', mask: true })
+
+  // 点击功能
+  switch (val) {
+    case '我的账单':
+      console.log('我的账单')
+      uni.navigateTo({
+        url: '/pagesMember/myEarnings/myEarnings',
+      })
+      break
+    case '我的申请':
+      console.log('我的申请')
+      break
+    case '我的推荐':
+      console.log('我的推荐')
+      break
+    case '会员权益':
+      console.log('会员权益')
+      break
+  }
+}
 </script>
 
 <template>
   <view class="nav-grid">
-    <view class="navItem" v-for="(item, index) in data" :key="index">
+    <view class="navItem" v-for="(item, index) in data" :key="index" @click="handleGrid(item.name)">
       <view class="navItem-link">
         <text style="color: #d62731; font-size: 40rpx" class="iconfont" :class="item.icon"></text>
       </view>
