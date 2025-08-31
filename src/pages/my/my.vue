@@ -8,6 +8,7 @@ import { useActivityStore } from '@/stores/modules/activity.ts'
 import { onLoad } from '@dcloudio/uni-app'
 import { checkedHireApi } from '@/api/hire.ts'
 import { cooperateCheckApi } from '@/api/cooperate.ts'
+import { maskMiddle } from '@/utils/maskMiddle.ts'
 
 // 定义 store
 const userStore = useUserStore()
@@ -73,7 +74,7 @@ onLoad(() => activityStore.activityListGet())
         </view>
         <!--   已登录     -->
         <view class="userText" v-else>
-          <view class="mobile">{{ userStore.profile.mobile }}</view>
+          <view class="mobile">{{ maskMiddle(userStore.profile.mobile) }}</view>
           <view class="role"
             >{{ formatRole(userStore.profile.role, userStore.profile.vipLevel) }}
           </view>
@@ -96,10 +97,18 @@ onLoad(() => activityStore.activityListGet())
       <!--   报名申请   -->
       <view class="signUp">
         <view class="item" @click="handleForm('hire')">
-          <image class="img" src="/static/images/yuanggong.png" mode="widthFix"></image>
+          <image
+            class="img"
+            src="https://objectstorageapi.gzg.sealos.run/dxepxlzz-sealaf-h91gpva7y7-cloud-bin/test-product/yuanggong.png"
+            mode="widthFix"
+          ></image>
         </view>
         <view class="item" @click="handleForm('cooperate')">
-          <image class="img" src="/static/images/hezuo.png" mode="widthFix"></image>
+          <image
+            class="img"
+            src="https://objectstorageapi.gzg.sealos.run/dxepxlzz-sealaf-h91gpva7y7-cloud-bin/test-product/hezuo.png"
+            mode="widthFix"
+          ></image>
         </view>
       </view>
 

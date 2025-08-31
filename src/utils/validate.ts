@@ -1,6 +1,6 @@
-import type { HireItem } from '@/types/HireItem'
+import type { FormItem } from '@/types/Apply'
 // 验证手机号码函数
-export const validateForm = (form: HireItem) => {
+export const validateForm = (form: FormItem) => {
   if (!form.userId || !form.name || !form.icCardFont || !form.icCardBack) {
     uni.showToast({
       title: '请填写完整信息',
@@ -10,7 +10,7 @@ export const validateForm = (form: HireItem) => {
   }
 
   // 基础验证：确保是字符串且不为空
-  if (typeof form.mobile !== 'string' || !form.mobile.trim()) {
+  if (!form.mobile.trim()) {
     uni.showToast({
       title: '电话不可以为空',
       icon: 'error',

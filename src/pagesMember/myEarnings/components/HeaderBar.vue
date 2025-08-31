@@ -22,8 +22,8 @@ const userStore = useUserStore()
         </view>
       </view>
       <view class="right">
-        <view class="tixian" v-if="true">提现</view>
-        <view class="total">合计：￥145.34</view>
+        <view class="tixian" v-if="false">提现</view>
+        <view class="total">已节省：￥0</view>
       </view>
     </view>
   </view>

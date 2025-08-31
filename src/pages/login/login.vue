@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { wxLoginApi } from '@/api/login.ts'
 import { useUserStore } from '@/stores'
+import { onLoad } from '@dcloudio/uni-app'
+import { ref } from 'vue'
 
 const userStore = useUserStore()
 
@@ -39,11 +41,17 @@ const handleLogin = (e: GetPhoneNumberEvent) => {
       params.code = res.code
 
       try {
-        const wxRes = await wxLoginApi(params.code, params.encryptedData!, params.iv!)
+        const wxRes = await wxLoginApi(
+          params.code,
+          params.encryptedData!,
+          params.iv!,
+          inviterCode.value,
+        )
         console.log('wxMobileLoginApi 返回', wxRes)
-
+        // 去掉openid
+        const { openid, ...newData } = wxRes.data
         if (wxRes.code === 200 && wxRes.data) {
-          userStore.setProfile(wxRes.data)
+          userStore.setProfile(newData)
 
           await uni.showToast({
             icon: 'success',
@@ -80,6 +88,15 @@ const handleLogin = (e: GetPhoneNumberEvent) => {
     },
   })
 }
+
+// 获取参数-邀请码
+const inviterCode = ref('')
+onLoad((options) => {
+  console.log(options?.inviterCode)
+  if (options) {
+    inviterCode.value = options.inviterCode
+  }
+})
 </script>
 
 <template>

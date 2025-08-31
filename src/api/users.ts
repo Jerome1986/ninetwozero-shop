@@ -1,6 +1,6 @@
 import { request } from '@/utils/http.ts'
 import type { UserItem } from '@/types/UserItem'
-import type { UpdateResult } from '@/types/Global'
+import type { inviterItem, UpdateResult } from '@/types/Global'
 
 /**
  * 根据用户id获取用户信息
@@ -32,5 +32,19 @@ export const userInfoUpdateApi = (
     method: 'POST',
     url: '/user/update',
     data: { userId, mobile, avatarUrl, gender, nickname },
+  })
+}
+
+/**
+ * 获取当前用户的邀请码获取下级用户列表
+ * /user/inviter
+ * @param {string} referralCode - 当前用户自身的邀请码
+ */
+
+export const userInviteGetApi = (referralCode: string) => {
+  return request<inviterItem>({
+    method: 'GET',
+    url: '/user/inviter',
+    data: { referralCode },
   })
 }

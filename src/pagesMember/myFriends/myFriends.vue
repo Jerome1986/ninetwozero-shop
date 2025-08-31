@@ -1,0 +1,213 @@
+<script setup lang="ts">
+import { maskMiddle } from '@/utils/maskMiddle.ts'
+import { computed, ref } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
+import { useUserStore } from '@/stores'
+import { onShareAppMessage } from '@dcloudio/uni-app'
+import { userInviteGetApi } from '@/api/users.ts'
+import type { UserItem } from '@/types/UserItem'
+
+const { safeAreaInsets } = uni.getSystemInfoSync()
+
+// 定义store
+const userStore = useUserStore()
+
+// 一级好友
+const firstFriends = ref<UserItem[]>([])
+// 二级好友
+const subFriends = ref<UserItem[]>([])
+// 总好友数
+const totalFriends = computed(() => {
+  return firstFriends.value.length + subFriends.value.length
+})
+
+// 根据自身邀请码查询好友
+const friendsListGet = async (referralCode: string) => {
+  const res = await userInviteGetApi(referralCode)
+  firstFriends.value = res.data.firstLevel
+  subFriends.value = res.data.subLevel
+}
+
+onLoad(() => friendsListGet(userStore.profile.referralCode))
+
+// 没有更多
+const noMore = computed(() => {
+  return firstFriends.value.length > 0 || subFriends.value.length > 0
+})
+
+//  发送给朋友-生命周期钩子--不为普通函数，请注意
+onShareAppMessage((res) => {
+  if (res.from === 'button') {
+    // 来自页面内按钮
+    return {
+      title: '通过按钮分享的专属海报',
+      path: `/pages/login/login?inviterCode=${userStore.profile.referralCode}`,
+      imageUrl:
+        'https://objectstorageapi.gzg.sealos.run/dxepxlzz-sealaf-h91gpva7y7-cloud-bin/banner4.png',
+    }
+  }
+  // 默认分享
+  return {
+    title: '给你的手机换个膜吧',
+    path: `/pages/login/login?inviterCode=${userStore.profile.referralCode}`,
+    imageUrl:
+      'https://objectstorageapi.gzg.sealos.run/dxepxlzz-sealaf-h91gpva7y7-cloud-bin/banner4.png',
+  }
+})
+</script>
+<template>
+  <view class="myFriends">
+    <!-- 头部 -->
+    <view class="head" v-if="totalFriends">
+      <view class="total">我的好友：{{ totalFriends }}个</view>
+    </view>
+    <!-- 一级好友 -->
+    <view class="friendsList" v-if="firstFriends.length > 0">
+      <view class="item" v-for="item in firstFriends" :key="item._id">
+        <view class="userAvatar">
+          <image class="url" :src="item.avatarUrl" mode="aspectFit"></image>
+        </view>
+        <view class="info">
+          <view class="mobile">
+            <text style="margin-right: 12rpx">{{ maskMiddle(item.mobile) }}</text>
+            <image
+              style="width: 40rpx; height: 40rpx"
+              src="/static/images/first.png"
+              mode="aspectFit"
+            ></image>
+          </view>
+          <view class="consumption">已消费：￥145.00</view>
+        </view>
+      </view>
+    </view>
+    <!-- 二级好友 -->
+    <view class="friendsList" v-if="subFriends.length > 0">
+      <view class="item" v-for="item in subFriends" :key="item._id">
+        <view class="userAvatar">
+          <image class="url" :src="item.avatarUrl" mode="aspectFit"></image>
+        </view>
+        <view class="info">
+          <view class="mobile">
+            <text style="margin-right: 12rpx">{{ maskMiddle(item.mobile) }}</text>
+            <image
+              style="width: 40rpx; height: 40rpx"
+              src="/static/images/sub.png"
+              mode="aspectFit"
+            ></image>
+          </view>
+          <view class="consumption">已消费：￥145.00</view>
+        </view>
+      </view>
+    </view>
+    <!--  暂无好友  -->
+    <view class="noMore" v-if="!noMore">
+      <view class="pic">
+        <image class="noPic" src="/static/images/noFriends.png" mode="aspectFit"></image>
+      </view>
+      <view class="tips">您还有分享过好友呢~</view>
+      <button class="share" open-type="share">去分享</button>
+    </view>
+    <!--  分享好友按钮  -->
+    <view class="toolbar" :style="{ paddingBottom: safeAreaInsets?.bottom + 'px' }" v-else>
+      <button class="btn" open-type="share">分享好友</button>
+    </view>
+  </view>
+</template>
+
+<style scoped lang="scss">
+.myFriends {
+  padding: 24rpx;
+  /*头部*/
+  .head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 28rpx;
+    color: $jel-font-title;
+  }
+
+  /*好友列表*/
+  .friendsList {
+    margin-top: 24rpx;
+    padding: 24rpx;
+    background-color: #ffffff;
+    border-radius: 8rpx;
+
+    .item {
+      display: flex;
+      align-items: center;
+      gap: 16rpx;
+
+      .userAvatar {
+        .url {
+          height: 100rpx;
+          width: 100rpx;
+          border-radius: 50%;
+          overflow: hidden;
+        }
+      }
+
+      .info {
+        color: $jel-font-title;
+        font-size: 28rpx;
+
+        .consumption {
+          color: $jel-font-dec;
+        }
+      }
+    }
+  }
+
+  /*没有更多*/
+  .noMore {
+    margin-top: 200rpx;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .pic {
+      width: 200rpx;
+      height: 200rpx;
+    }
+
+    .tips {
+      font-size: 28rpx;
+      color: $jel-font-dec;
+    }
+
+    .share {
+      margin-top: 24rpx;
+      font-size: 24rpx;
+      color: #ffffff;
+      background-color: $jel-brandColor;
+      border-radius: 8rpx;
+    }
+  }
+
+  /*底部按钮*/
+  .toolbar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    background-color: #fff;
+    height: 100rpx;
+    padding: 0 20rpx var(--window-bottom);
+    border-top: 1rpx solid #eaeaea;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: content-box;
+
+    .btn {
+      width: 100%;
+      background-color: $jel-brandColor;
+      color: #fff;
+      border-radius: 40rpx;
+      font-size: 28rpx;
+    }
+  }
+}
+</style>

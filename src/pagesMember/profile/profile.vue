@@ -10,9 +10,9 @@ const userStore = useUserStore()
 // 构建基础数据
 const userData = ref({
   nickname: '',
-  mobile: '',
+  mobile: userStore.profile.mobile || '',
   gender: 1,
-  avatarUrl: userStore.profile.avatarUrl,
+  avatarUrl: userStore.profile.avatarUrl || '',
 })
 
 // 根据当前用户id请求用户信息

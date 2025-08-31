@@ -1,20 +1,19 @@
 <script setup lang="ts">
 // 会员权益数据
-const vipBenefits = [
-  {
-    icon: 'icon-zhekou',
-    text: '9折',
-  },
-  {
-    icon: 'icon-zengsong',
-    text: '无赠送贴膜',
-  },
-]
+import { formatTimestamp } from '@/utils/formatTimestamp.ts'
+import { useUserStore } from '@/stores'
+
+// 定义store
+const userStore = useUserStore()
 </script>
 
 <template>
   <view class="vip-card">
-    <image class="backGroud" src="/static/images/backgroudVip.png" mode="widthFix"></image>
+    <image
+      class="backGroud"
+      src="https://objectstorageapi.gzg.sealos.run/dxepxlzz-sealaf-h91gpva7y7-cloud-bin/test-product/backgroudVip.png"
+      mode="widthFix"
+    ></image>
     <view class="vipContent">
       <view class="top">
         <view class="icon">
@@ -22,19 +21,26 @@ const vipBenefits = [
           <view class="vipText">会员权益</view>
         </view>
         <!--  到期时间   -->
-        <view class="expirationTime">到期：2026.08.17</view>
+        <view class="expirationTime"
+          >到期：{{ formatTimestamp(userStore.profile.vipEndTime) }}
+        </view>
       </view>
       <!--  会员权益  -->
       <view class="interests">
         <!--  权益内容  -->
         <view class="vipValue">
-          <view class="item" v-for="(item, index) in vipBenefits" :key="index">
+          <!--  折扣  -->
+          <view class="item">
+            <text class="iconfont icon-zhekou" style="margin-right: 10rpx; font-size: 28rpx"></text>
+            <text>{{ userStore.profile.vipDiscount }}折</text>
+          </view>
+          <!--  赠送次数  -->
+          <view class="item">
             <text
-              class="iconfont"
-              :class="item.icon"
+              class="iconfont icon-zengsong"
               style="margin-right: 10rpx; font-size: 28rpx"
             ></text>
-            <text>{{ item.text }}</text>
+            <text>赠送贴膜{{ userStore.profile.vipGift }}次</text>
           </view>
         </view>
         <!--  提升等级按钮  -->

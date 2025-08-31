@@ -1,3 +1,5 @@
+import type { UserItem } from '@/types/UserItem'
+
 /** 通用分页结果类型 */
 export type PageResult<T> = {
   /** 列表数据 */
@@ -29,10 +31,21 @@ export type AddResult = {
 /**
  * 文件类型
  */
-
 export type File = {
-  /** 用户手机号 */
+  /** 原始文件名，上传前的文件名，如 'photo.jpg' */
   originalname: string
+  /** 存储路径或文件在服务器上的相对路径，如 '/uploads/2025/08/30/photo.jpg' */
   path: string
+  /** 文件 MIME 类型，用于标识文件格式，如 'image/jpeg', 'application/pdf' */
   mimetype: string
+}
+
+/**
+ * 通用查询下级邀请类型
+ */
+export type inviterItem = {
+  /** 一级好友列表 */
+  firstLevel: UserItem[]
+  /** 二级好友列表 */
+  subLevel: UserItem[]
 }

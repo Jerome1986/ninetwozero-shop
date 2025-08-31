@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import UpdateFIle from '@/components/UpdateFIle.vue'
 import { ref } from 'vue'
-import type { FormItem } from '@/types/HireItem'
+import type { FormItem } from '@/types/Apply'
 import { validateForm } from '@/utils/validate'
 import { useUserStore } from '@/stores'
 import { updateImg } from '@/composables/updateImg'

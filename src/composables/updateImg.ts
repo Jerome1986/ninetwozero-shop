@@ -1,5 +1,5 @@
 import { extractFilenameFromUrl } from '@/utils/extractFilename'
-import type { FormItem } from '@/types/HireItem'
+import type { FormItem } from '@/types/Apply'
 
 export const updateImg = (form: FormItem, type: string) => {
   uni.chooseImage({

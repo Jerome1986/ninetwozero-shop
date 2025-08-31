@@ -132,7 +132,35 @@
         {
           "path": "myEarnings/myEarnings",
           "style": {
-            "navigationBarTitleText": "我的收益",
+            "navigationBarTitleText": "优惠券",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "myApply/myApply",
+          "style": {
+            "navigationBarTitleText": "我的申请",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "applyStatus/applyStatus",
+          "style": {
+            "navigationBarTitleText": "申请状态",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "myFriends/myFriends",
+          "style": {
+            "navigationBarTitleText": "我的推荐",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "myVip/myVip",
+          "style": {
+            "navigationBarTitleText": "我的会员",
             "enablePullDownRefresh": false
           }
         }
