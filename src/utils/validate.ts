@@ -38,3 +38,10 @@ export const validateForm = (form: FormItem) => {
 
   return true
 }
+
+// 验证用户会员是否过期
+export const isVipExpired = (vipEndTime: string | Date): boolean => {
+  const now = new Date()
+  const end = new Date(vipEndTime)
+  return now > end
+}

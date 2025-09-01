@@ -6,6 +6,7 @@ import { useUserStore } from '@/stores'
 import { onShareAppMessage } from '@dcloudio/uni-app'
 import { userInviteGetApi } from '@/api/users.ts'
 import type { UserItem } from '@/types/UserItem'
+import { formatTimestamp } from '@/utils/formatTimestamp.ts'
 
 const { safeAreaInsets } = uni.getSystemInfoSync()
 
@@ -76,7 +77,7 @@ onShareAppMessage((res) => {
               mode="aspectFit"
             ></image>
           </view>
-          <view class="consumption">已消费：￥145.00</view>
+          <view class="consumption">注册时间：{{ formatTimestamp(item.registerTime) }}</view>
         </view>
       </view>
     </view>
@@ -95,7 +96,7 @@ onShareAppMessage((res) => {
               mode="aspectFit"
             ></image>
           </view>
-          <view class="consumption">已消费：￥145.00</view>
+          <view class="consumption">注册时间：{{ formatTimestamp(item.registerTime) }}</view>
         </view>
       </view>
     </view>
@@ -129,14 +130,15 @@ onShareAppMessage((res) => {
   /*好友列表*/
   .friendsList {
     margin-top: 24rpx;
-    padding: 24rpx;
-    background-color: #ffffff;
-    border-radius: 8rpx;
 
     .item {
+      padding: 24rpx;
+      margin-bottom: 24rpx;
       display: flex;
       align-items: center;
       gap: 16rpx;
+      background-color: #ffffff;
+      border-radius: 8rpx;
 
       .userAvatar {
         .url {

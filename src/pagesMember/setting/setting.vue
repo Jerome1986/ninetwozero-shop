@@ -49,8 +49,6 @@ const onLogout = () => {
     <!-- 列表2 -->
     <view class="list">
       <button hover-class="none" class="item" @click="handleClick('profile')">修改个人资料</button>
-      <button hover-class="none" class="item" @click="handleClick('share')">分享好友</button>
-      <button hover-class="none" class="item" @click="handleClick('admin')">后台管理</button>
     </view>
     <!-- 操作按钮 -->
     <view class="action">

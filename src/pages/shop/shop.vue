@@ -106,6 +106,18 @@ const handleType = (typeId: string) => {
   })
 }
 
+/**
+ * 处理阅读量的更新
+ * @description 接受子组件的列表项点击事件，并获取更新当前项阅读量的参数，同步更新父组件的阅读量
+ * @param newLook - 更新后从服务端返回的阅读量
+ * @param productId - 点击当前项的id
+ */
+const handleNewLook = (newLook: number, productId: string) => {
+  console.log('更新后的阅读量', newLook, productId)
+  const item = giftList.value.find((p) => p._id === productId)
+  if (item) item.lookNum = newLook
+}
+
 onLoad(async () => {
   await cateListGet()
 })
@@ -129,6 +141,7 @@ onLoad(async () => {
         @scrolltolower="handleScrolltolower"
         :finish="finish"
         :cate-type="2"
+        @update:look-num="handleNewLook"
       ></GlobalProductBar>
     </view>
   </view>

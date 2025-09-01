@@ -19,22 +19,24 @@ const activeIndex = ref(0)
 
 // vip列表
 const vipList = ref<VipItem[]>([])
+
 // 获取vip列表
 const vipListGet = async () => {
   const res = await vipGetApi()
   vipList.value = res.data
-  currentPrice.value = vipList.value[activeIndex.value].price
   currentVip.value = vipList.value[activeIndex.value]
 }
 onLoad(() => vipListGet())
 
 // 当前支付的价格--暂时为所选择的价格，后期可根据积分、优惠券抵扣计算
-const currentPrice = ref(0)
+const currentPrice = (price?: number) => {
+  return price || vipList.value[activeIndex.value]?.price
+}
 // 当前所选择的产品
 const currentVip = ref<VipItem>()
 // 处理选择
 const handleSelected = (item: VipItem, index: number) => {
-  currentPrice.value = item.price
+  currentPrice(item.price)
   activeIndex.value = index
   currentVip.value = item
 }
@@ -42,6 +44,7 @@ const handleSelected = (item: VipItem, index: number) => {
 // 点击立即购买
 const buyNow = async () => {
   console.log('buyNow', currentVip.value)
+
   // 1.向后端发起支付请求
   if (currentVip.value?._id) {
     const payRes = await wxPayApi(
@@ -52,7 +55,7 @@ const buyNow = async () => {
       currentVip.value.discount,
       currentVip.value.gift,
       currentVip.value.term,
-      currentVip.value.price,
+      currentPrice(),
       '办理会员',
     )
     console.log(payRes)
@@ -72,6 +75,10 @@ const buyNow = async () => {
       },
       fail(err) {
         console.error('支付失败', err)
+        uni.showToast({
+          icon: 'none',
+          title: '取消支付',
+        })
       },
     })
   }
@@ -89,7 +96,9 @@ const buyNow = async () => {
       </view>
       <view class="mobile">{{ maskMiddle(userStore.profile.mobile) }}</view>
       <!-- 当前用户的身份 -->
-      <view class="role">({{ formatRole(userStore.profile.role) }})</view>
+      <view class="role"
+        >({{ formatRole(userStore.profile.role, userStore.profile.vipLevel) }})</view
+      >
     </view>
     <!-- 会员权益 -->
     <scroll-view class="vip" :scroll-x="true" :show-scrollbar="false">
@@ -124,7 +133,7 @@ const buyNow = async () => {
       <view class="buyPrice">
         <text style="color: #333333">支付金额：</text>
         <text>￥</text>
-        <text style="font-size: 32rpx">{{ currentPrice.toFixed(1) }}</text>
+        <text style="font-size: 32rpx">{{ currentPrice() }}</text>
       </view>
       <view class="buyBtn" @click="buyNow">立即购买</view>
     </view>

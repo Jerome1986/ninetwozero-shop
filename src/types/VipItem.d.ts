@@ -18,3 +18,18 @@ export type VipItem = {
   /** 会员有效期（如“一年”、“半年”、“永久”）*/
   term: string
 }
+
+/**
+ * 查询当前用户的下一会员等级
+ */
+
+export type VipRenderInfo = {
+  /** 加多少钱，比如 30 */
+  price: number
+  /** 会员等级文字，如 "高级会员" */
+  levelName: string
+  /** 折扣，5.5 表示 5.5折 */
+  discount: number
+  /** 赠送贴膜次数 */
+  giftCount: number
+}

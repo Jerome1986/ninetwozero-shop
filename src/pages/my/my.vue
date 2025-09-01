@@ -9,6 +9,9 @@ import { onLoad } from '@dcloudio/uni-app'
 import { checkedHireApi } from '@/api/hire.ts'
 import { cooperateCheckApi } from '@/api/cooperate.ts'
 import { maskMiddle } from '@/utils/maskMiddle.ts'
+import type { VipRenderInfo } from '@/types/VipItem'
+import { nextVipLevelApi } from '@/api/vip.ts'
+import { ref } from 'vue'
 
 // 定义 store
 const userStore = useUserStore()
@@ -56,7 +59,14 @@ const handleForm = async (fromType: string) => {
   }
 }
 
-onLoad(() => activityStore.activityListGet())
+// 查询下一会员等级
+const nextVipInfo = ref<VipRenderInfo>()
+const nextVipLevelGet = async () => {
+  const res = await nextVipLevelApi(userStore.profile.vipLevel)
+  nextVipInfo.value = res.data
+}
+
+onLoad(async () => await Promise.all([activityStore.activityListGet(), nextVipLevelGet()]))
 </script>
 
 <template>
@@ -89,8 +99,9 @@ onLoad(() => activityStore.activityListGet())
 
     <view class="content">
       <!-- 会员权益卡片 -->
-      <VipCard v-if="userStore.profile.role === 'vip'"></VipCard>
-
+      <navigator url="/pagesMember/myVip/myVip">
+        <VipCard :nextVipInfo="nextVipInfo" v-if="userStore.profile.role === 'vip'"></VipCard>
+      </navigator>
       <!-- 功能导航 -->
       <NavGrid></NavGrid>
 

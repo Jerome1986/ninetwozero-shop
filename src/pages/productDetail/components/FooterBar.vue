@@ -39,6 +39,11 @@ const buyNow = () => {
 // 处理我想要
 const handleWant = () => {
   console.log('handleWant')
+  uni.showModal({
+    title: '提示',
+    content: '已收到你的心声',
+    confirmColor: '#d62731',
+  })
 }
 </script>
 

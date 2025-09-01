@@ -25,7 +25,7 @@ const join = () => {
 <template>
   <view class="wareHouse">
     <!--  用户端  -->
-    <view class="users" v-if="userStore.profile.role === 'user'">
+    <view class="users" v-if="userStore.profile.role !== 'manager'">
       <!-- 提示图标 -->
       <image
         class="tipsPic"

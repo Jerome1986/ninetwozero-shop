@@ -2,16 +2,20 @@
 import CustomNav from '@/pages/home/components/CustomNav.vue'
 import Banner from '@/components/Banner.vue'
 import ProductList from '@/components/ProductList.vue'
+import PageSkeleton from '@/pages/home/components/PageSkeleton.vue'
+import TeamStyle from '@/components/TeamStyle.vue'
 
 import { ref } from 'vue'
 import type { ProductItem } from '@/types/ProductItem.d.ts'
 import { productListGetApi } from '@/api/product.ts'
 import { onLoad } from '@dcloudio/uni-app'
-import TeamStyle from '@/components/TeamStyle.vue'
 import type { TeamItem } from '@/types/Team'
 import { teamStudyListGetApi } from '@/api/team.ts'
-import PageSkeleton from '@/pages/home/components/PageSkeleton.vue'
 import { useActivityStore } from '@/stores/modules/activity.ts'
+import { useUserStore } from '@/stores'
+
+// 定义 store
+const userStore = useUserStore()
 
 // 活动列表
 const activityStore = useActivityStore()
@@ -31,6 +35,7 @@ const teamListGet = async () => {
   teamList.value = res.data.list
 }
 
+// 骨架屏加载开关
 const isLoading = ref(false)
 // 获取数据后调用
 onLoad(async () => {

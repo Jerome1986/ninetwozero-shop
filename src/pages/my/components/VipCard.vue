@@ -2,6 +2,11 @@
 // 会员权益数据
 import { formatTimestamp } from '@/utils/formatTimestamp.ts'
 import { useUserStore } from '@/stores'
+import type { VipRenderInfo } from '@/types/VipItem'
+
+defineProps<{
+  nextVipInfo?: VipRenderInfo
+}>()
 
 // 定义store
 const userStore = useUserStore()
@@ -49,7 +54,11 @@ const userStore = useUserStore()
       <!--  下一级权益提示  -->
       <view class="nextVipTips">
         <image class="icon" src="/static/images/laba.png" mode="aspectFill"></image>
-        <view class="tips">再加 ￥30 → 高级会员 (享受8.5折 + 3次贴膜)</view>
+        <view class="tips" v-if="userStore.profile.vipLevel < 3"
+          >下级权益 → {{ nextVipInfo?.levelName }} (享受{{ nextVipInfo?.discount }}折 +
+          {{ nextVipInfo?.giftCount }}次贴膜)
+        </view>
+        <view class="tips" v-else> 你已经是我们最高等级的会员啦！感谢您的支持！</view>
       </view>
     </view>
   </view>

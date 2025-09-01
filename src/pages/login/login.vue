@@ -3,6 +3,7 @@ import { wxLoginApi } from '@/api/login.ts'
 import { useUserStore } from '@/stores'
 import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
+import { isVipExpired } from '@/utils/validate.ts'
 
 const userStore = useUserStore()
 
@@ -19,50 +20,43 @@ type GetPhoneNumberEvent = {
 const handleLogin = (e: GetPhoneNumberEvent) => {
   console.log('handleMobileLogin', e)
 
-  const params = {
-    code: '',
-    encryptedData: e.detail.encryptedData,
-    iv: e.detail.iv,
-  }
-
   uni.login({
-    // 获取code成功
     success: async (res) => {
-      console.log('登录', res)
       if (!res.code) {
-        await uni.showToast({
-          icon: 'none',
-          title: '获取code失败',
-        })
+        await uni.showToast({ icon: 'none', title: '获取code失败' })
         console.error('uni.login 获取code失败', res)
         return
       }
 
-      params.code = res.code
-
       try {
         const wxRes = await wxLoginApi(
-          params.code,
-          params.encryptedData!,
-          params.iv!,
+          res.code,
+          e.detail.encryptedData!,
+          e.detail.iv!,
           inviterCode.value,
         )
         console.log('wxMobileLoginApi 返回', wxRes)
-        // 去掉openid
-        const { openid, ...newData } = wxRes.data
+
         if (wxRes.code === 200 && wxRes.data) {
+          const { openid, ...newData } = wxRes.data
+
+          // 检测会员是否过期
+          if (newData.role === 'vip' && newData.vipEndTime && isVipExpired(newData.vipEndTime)) {
+            newData.role = 'user'
+            console.log('会员已过期')
+          }
+
           userStore.setProfile(newData)
 
           await uni.showToast({
             icon: 'success',
             title: '登录成功',
+            duration: 1000,
           })
 
           setTimeout(() => {
-            uni.switchTab({
-              url: '/pages/home/home',
-            })
-          }, 800)
+            uni.switchTab({ url: '/pages/home/home' })
+          }, 1000)
         } else {
           await uni.showToast({
             icon: 'none',
@@ -71,19 +65,12 @@ const handleLogin = (e: GetPhoneNumberEvent) => {
           console.warn('登录接口响应失败', wxRes)
         }
       } catch (err) {
-        await uni.showToast({
-          icon: 'none',
-          title: '请求异常，请检查网络',
-        })
+        await uni.showToast({ icon: 'none', title: '请求异常，请检查网络' })
         console.error('调用登录接口异常', err)
       }
     },
-    // 获取code失败
     fail: (err) => {
-      uni.showToast({
-        icon: 'none',
-        title: '微信登录失败',
-      })
+      uni.showToast({ icon: 'none', title: '微信登录失败' })
       console.error('login 失败', err)
     },
   })

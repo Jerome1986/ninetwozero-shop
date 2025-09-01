@@ -37,8 +37,9 @@ onLoad(async (options) => {
       <view class="price-row">
         <view class="left">
           <view class="price">
-            <text class="symbol">￥</text>
-            <text class="number">{{ productData?.currentPrice.toFixed(2) }}</text>
+            <!--                      <text class="symbol">￥</text>-->
+            <!--                      <text class="number">{{ productData?.currentPrice.toFixed(2) }}</text>-->
+            <text class="number">非卖品</text>
           </view>
           <view class="original-price">￥{{ productData?.originalPrice.toFixed(2) }}</view>
         </view>

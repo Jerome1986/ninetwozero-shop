@@ -2,6 +2,7 @@
 import type { GiftItem } from '@/types/GiftItem'
 import type { ProductItem } from '@/types/ProductItem'
 import { ref, watch } from 'vue'
+import { autoLookNumApi } from '@/api/lookNum.ts'
 
 // 使用联合类型
 type ListItem = GiftItem | ProductItem
@@ -36,12 +37,15 @@ watch(
   { deep: true },
 )
 
+const emits = defineEmits(['update:lookNum'])
 // 点击跳转详情
-const handleItemDetail = (productId: string) => {
+const handleItemDetail = async (productId: string) => {
   console.log(productId)
-  uni.navigateTo({
+  const updateLook = await autoLookNumApi(productId, Number(props.cateType))
+  await uni.navigateTo({
     url: `/pages/productDetail/productDetail?productId=${productId}&cateType=${props.cateType}`,
   })
+  emits('update:lookNum', updateLook.data.lookNum, productId)
 }
 </script>
 
@@ -66,7 +70,7 @@ const handleItemDetail = (productId: string) => {
           <view class="title">{{ item.name }}</view>
           <view class="desc">{{ item.dec }}</view>
           <view class="footer">
-            <view class="price">{{ item.currentPrice }}</view>
+            <!--            <view class="price">{{ item.currentPrice }}</view>-->
             <view class="views">
               <text class="iconfont icon-zongliulanliang"></text>
               <text>{{ 'lookView' in item ? item.lookView : item.lookNum }}</text>
@@ -87,7 +91,7 @@ const handleItemDetail = (productId: string) => {
           <view class="title">{{ item.name }}</view>
           <view class="desc">{{ item.dec }}</view>
           <view class="footer">
-            <view class="price">{{ item.currentPrice }}</view>
+            <!--            <view class="price">{{ item.currentPrice }}</view>-->
             <view class="views">
               <text class="iconfont icon-zongliulanliang"></text>
               <text>{{ 'lookView' in item ? item.lookView : item.lookNum }}</text>
