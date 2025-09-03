@@ -11,3 +11,5 @@ export default pinia
 
 // 模块统一导出
 export * from './modules/user.ts'
+export * from './modules/manager.ts'
+export * from './modules/activity.ts'

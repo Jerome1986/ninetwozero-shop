@@ -97,11 +97,11 @@ const buyNow = async () => {
       <view class="mobile">{{ maskMiddle(userStore.profile.mobile) }}</view>
       <!-- 当前用户的身份 -->
       <view class="role"
-        >({{ formatRole(userStore.profile.role, userStore.profile.vipLevel) }})</view
-      >
+        >({{ formatRole(userStore.profile.role, userStore.profile.vipLevel) }})
+      </view>
     </view>
     <!-- 会员权益 -->
-    <scroll-view class="vip" :scroll-x="true" :show-scrollbar="false">
+    <scroll-view class="vip" :scroll-x="true" :enhanced="true" :show-scrollbar="false">
       <view
         class="item"
         :class="{ itemActive: activeIndex === index }"

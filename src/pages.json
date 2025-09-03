@@ -68,6 +68,13 @@
         "navigationBarTitleText": "合作申请",
         "enablePullDownRefresh": false
       }
+    },
+    {
+      "path": "pages/pay/pay",
+      "style": {
+        "navigationBarTitleText": "支付订单",
+        "enablePullDownRefresh": false
+      }
     }
   ],
   "globalStyle": {

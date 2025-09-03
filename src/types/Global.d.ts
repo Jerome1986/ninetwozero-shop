@@ -49,3 +49,12 @@ export type inviterItem = {
   /** 二级好友列表 */
   subLevel: UserItem[]
 }
+
+/**
+ * 生成收款码返回类型
+ */
+
+export type QrCode = {
+  /**  返回的二维码base64 */
+  dataUrl: string
+}
