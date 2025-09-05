@@ -57,7 +57,9 @@ const handleSaveCode = () => {
         <!--  下级摊位数据 -->
         <StallsList></StallsList>
         <!--   库存订单申请记录   -->
-        <OrderRecord></OrderRecord>
+        <navigator url="/pages/orderList/orderList" open-type="navigate">
+          <OrderRecord></OrderRecord>
+        </navigator>
       </view>
     </scroll-view>
     <!--  弹窗  -->

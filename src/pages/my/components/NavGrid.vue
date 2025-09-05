@@ -72,7 +72,7 @@ const handleGrid = (val: string) => {
   .navItem {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    align-items: center;
     gap: 12rpx;
 
     .navItem-link {

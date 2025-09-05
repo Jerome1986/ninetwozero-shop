@@ -13,3 +13,4 @@ export default pinia
 export * from './modules/user.ts'
 export * from './modules/manager.ts'
 export * from './modules/activity.ts'
+export * from './modules/cart.ts'

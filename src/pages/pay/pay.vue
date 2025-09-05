@@ -19,6 +19,7 @@ onLoad((options: any) => {
 // 实时显示本次支付金额
 const displayAmount = computed(() => amount.value || '0.00')
 
+// 点击支付
 const handlePay = () => {
   if (!amount.value) {
     uni.showToast({ title: '请输入金额', icon: 'none' })

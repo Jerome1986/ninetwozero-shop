@@ -1,6 +1,6 @@
 <script setup lang="ts">
 //获取安全距离
-import { useUserStore } from '@/stores'
+import { useCartStore, useUserStore } from '@/stores'
 
 const { safeAreaInsets } = uni.getSystemInfoSync()
 
@@ -10,6 +10,8 @@ defineProps<{
 
 // 定义store
 const userStore = useUserStore()
+const cartStore = useCartStore()
+
 // 店长验证函数
 const managerVerification = () => {
   if (userStore.profile.role !== 'manager') {
@@ -22,11 +24,15 @@ const managerVerification = () => {
   }
 }
 
+const emits = defineEmits(['addCart'])
+
 // 加入库存
 const addCart = () => {
-  console.log('addCart')
+  console.log('子组件addCart')
   // 1.验证身份
   managerVerification()
+  // 2.提交事件
+  emits('addCart')
 }
 
 // 立即添加
@@ -56,15 +62,15 @@ const handleWant = () => {
   >
     <view class="icons">
       <button class="icons-button" open-type="contact">
-        <text class="iconfont icon-kefu"></text>
+        <text style="font-size: 40rpx" class="iconfont icon-kefu"></text>
         客服
       </button>
       <navigator class="icons-button" url="/pages/warehouse/warehouse" open-type="switchTab">
-        <text class="iconfont icon-a-ziyuan1"></text>
+        <text style="font-size: 40rpx" class="iconfont icon-a-ziyuan1"></text>
         <!-- 当前购物车数量 -->
-        <!--        <text class="cratNum" v-if="cartStore.cartList.length">-->
-        <!--          {{ cartStore.cartNum }}-->
-        <!--        </text>-->
+        <text class="cratNum" v-if="cartStore.cartCount > 0">
+          {{ cartStore.cartCount }}
+        </text>
         仓库
       </navigator>
     </view>

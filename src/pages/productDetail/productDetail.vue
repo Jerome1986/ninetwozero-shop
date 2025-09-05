@@ -4,6 +4,10 @@ import type { ProductItem } from '@/types/ProductItem'
 import { productByIdGetApi } from '@/api/product.ts'
 import { onLoad } from '@dcloudio/uni-app'
 import FooterBar from '@/pages/productDetail/components/FooterBar.vue'
+import { useCartStore } from '@/stores'
+
+// 定义store
+const cartStore = useCartStore()
 
 // 获取产品列表
 const productData = ref<ProductItem>()
@@ -13,6 +17,7 @@ const productDataGet = async (productId: string, cateType: number) => {
   productData.value = res.data
 }
 
+// 商品类型--商品  礼品
 const cateType = ref('')
 onLoad(async (options) => {
   console.log(options)
@@ -21,6 +26,31 @@ onLoad(async (options) => {
     await productDataGet(options.productId, options.cateType)
   }
 })
+
+// 处理添加购物车
+const handleAddCart = () => {
+  console.log('父组件addCart')
+
+  if (productData.value?._id) {
+    // 构建参数
+    const cartItem = {
+      id: productData.value?._id,
+      selected: true,
+      imageUrl: productData.value?.cover,
+      name: productData.value?.name,
+      description: productData.value?.dec,
+      unitPrice: productData.value?.currentPrice,
+      quantity: 1,
+    }
+
+    // 添加购物车 - 新结构不需要传入cartList参数
+    cartStore.addCartItem(productData.value?.brand, productData.value?.model, cartItem)
+
+    setTimeout(() => {
+      uni.showToast({ icon: 'success', title: '已入库', mask: true })
+    }, 300)
+  }
+}
 </script>
 
 <template>
@@ -37,9 +67,9 @@ onLoad(async (options) => {
       <view class="price-row">
         <view class="left">
           <view class="price">
-            <!--                      <text class="symbol">￥</text>-->
-            <!--                      <text class="number">{{ productData?.currentPrice.toFixed(2) }}</text>-->
-            <text class="number">非卖品</text>
+            <text class="symbol">￥</text>
+            <text class="number">{{ productData?.currentPrice.toFixed(2) }}</text>
+            <!--            <text class="number">非卖品</text>-->
           </view>
           <view class="original-price">￥{{ productData?.originalPrice.toFixed(2) }}</view>
         </view>
@@ -75,7 +105,7 @@ onLoad(async (options) => {
     </view>
 
     <!-- 底部操作栏 -->
-    <FooterBar :cateType="cateType"></FooterBar>
+    <FooterBar :cateType="cateType" @addCart="handleAddCart"></FooterBar>
   </scroll-view>
 </template>
 

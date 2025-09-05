@@ -12,6 +12,7 @@ import { maskMiddle } from '@/utils/maskMiddle.ts'
 import type { VipRenderInfo } from '@/types/VipItem'
 import { nextVipLevelApi } from '@/api/vip.ts'
 import { ref } from 'vue'
+import OrderNav from '@/pages/my/components/OrderNav.vue'
 
 // 定义 store
 const userStore = useUserStore()
@@ -103,7 +104,8 @@ onLoad(async () => await Promise.all([activityStore.activityListGet(), nextVipLe
         <VipCard :nextVipInfo="nextVipInfo" v-if="userStore.profile.role === 'vip'"></VipCard>
       </navigator>
       <!-- 功能导航 -->
-      <NavGrid></NavGrid>
+      <OrderNav v-if="userStore.profile.role === 'manager'"></OrderNav>
+      <NavGrid v-else></NavGrid>
 
       <!--   报名申请   -->
       <view class="signUp">

@@ -14,7 +14,7 @@ import NavTitle from '@/components/NavTitle.vue'
           <view class="orderTime">下单时间:2025-08-07 18:17</view>
         </view>
         <!--  订单状态（备货中  待取货  已完成）  -->
-        <view class="state">备货中</view>
+        <view class="state stateA">备货中</view>
       </view>
     </view>
   </view>
@@ -55,6 +55,21 @@ import NavTitle from '@/components/NavTitle.vue'
       /*审核状态*/
       .state {
         font-size: 24rpx;
+      }
+
+      /*备货中*/
+      .stateA {
+        color: #ff6b19;
+      }
+
+      /*待取货*/
+      .stateB {
+        color: #d62731;
+      }
+
+      /*已完成*/
+      .stateC {
+        color: #27b20b;
       }
     }
   }

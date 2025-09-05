@@ -16,4 +16,12 @@ export type ProductItem = {
   proImages: string[]
   /** 浏览量（用于排序和热度统计） */
   lookNum: number
+  /** 型号 (例如 16max / mate60 pro) */
+  modelId: string
+  /** 品牌 (例如 iPhone / 华为) */
+  brandId: string
+  /** 品牌名 */
+  brand: string
+  /** 型号名 */
+  model: string
 }
