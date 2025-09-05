@@ -1,15 +1,19 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
+// tab选项
 const order = [
   { id: '1', state: '全部' },
-  { id: '1', state: '备货' },
-  { id: '1', state: '取货' },
-  { id: '1', state: '完成' },
+  { id: '2', state: '备货中' },
+  { id: '3', state: '待取货' },
+  { id: '4', state: '已完成' },
+  { id: '5', state: '已取消' },
 ]
 
 // 激活下标
 const activeIndex = ref(0)
+
+// 根据订单状态和门店id获取订单
 </script>
 <template>
   <view class="orderList">
@@ -48,7 +52,7 @@ const activeIndex = ref(0)
 
     .tabItem {
       padding: 8rpx 12rpx;
-      width: 72rpx;
+      width: fit-content;
       height: 50rpx;
       font-size: 24rpx;
       color: $jel-font-title;
@@ -106,6 +110,11 @@ const activeIndex = ref(0)
       /*已完成*/
       .stateC {
         color: #27b20b;
+      }
+
+      /*已取消*/
+      .stateD {
+        color: $jel-font-dec;
       }
     }
   }

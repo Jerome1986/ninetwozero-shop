@@ -34,6 +34,9 @@ const addProNum = (brand: string, model: string, itemId: string, num: number) =>
 // 提交订单
 const orderSubmit = () => {
   console.log('orderSubmit', cartStore.selectedItems)
+  uni.navigateTo({
+    url: '/pages/confirmOrder/confirmOrder',
+  })
 }
 </script>
 <template>

@@ -1,11 +1,49 @@
 <script setup lang="ts">
-import { useCartStore } from '@/stores'
+import { useCartStore, useManagerStore } from '@/stores'
+import { ref } from 'vue'
+import { managerOrderAddApi } from '@/api/order.ts'
+import type { OrderData } from '@/types/ManagerOrder'
 
+// 安全距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
-console.log(safeAreaInsets)
 //定义store
 const cartStore = useCartStore()
-console.log(cartStore.selectedItems)
+const managerStore = useManagerStore()
+
+console.log('所选择商品', cartStore.selectedItems)
+
+// 订单参数
+const orderData = ref<OrderData>({
+  storeId: managerStore.managerInfo?.storeId,
+  managerId: managerStore.managerInfo?.managerId,
+  product: cartStore.selectedItems,
+  total: cartStore.cartTotal,
+  applicant: {
+    name: managerStore.managerInfo?.managerName,
+    shop: managerStore.managerInfo?.address,
+    mobile: managerStore.managerInfo?.phone,
+  },
+})
+
+// 确认订单提交入库
+const submit = async () => {
+  console.log('提交')
+  const res = await managerOrderAddApi(orderData.value)
+  if (res.data.insertedId) {
+    await uni.showToast({
+      icon: 'success',
+      title: '下单成功',
+    })
+    // 清空购物车
+    cartStore.clearCart()
+    // 跳转到首页
+    setTimeout(() => {
+      uni.switchTab({
+        url: '/pages/home/home',
+      })
+    }, 500)
+  }
+}
 </script>
 
 <template>
@@ -44,29 +82,31 @@ console.log(cartStore.selectedItems)
         </view>
       </view>
     </view>
+    <!-- 合计金额  -->
+    <view class="totalOrder">
+      <text style="color: #333333">合计金额</text>
+      <text style="color: #d62731">￥{{ cartStore.cartTotal }}</text>
+    </view>
     <!--  订单人信息  -->
     <view class="orderInfo">
       <view class="title">提货人信息</view>
       <view class="item">
         <view class="label">申请人</view>
-        <view class="value">周周</view>
+        <view class="value">{{ managerStore.managerInfo?.managerName }}</view>
       </view>
       <view class="item">
         <view class="label">申请门店</view>
-        <view class="value">武昌街道口店</view>
+        <view class="value">{{ managerStore.managerInfo?.address }}</view>
       </view>
-      <view class="item">
-        <view class="label">下单时间</view>
-        <view class="value">2025.8.7</view>
-      </view>
+
       <view class="item">
         <view class="label">联系方式</view>
-        <view class="value">15888881288</view>
+        <view class="value">{{ managerStore.managerInfo?.phone }}</view>
       </view>
     </view>
     <!-- 吸底工具栏 -->
     <view class="toolbar" :style="{ paddingBottom: safeAreaInsets?.bottom + 'px' }">
-      <button class="btn">确认订单</button>
+      <button class="btn" @click="submit">确认订单</button>
     </view>
     <!-- 底部占位 -->
     <view class="toolbar-height"></view>
@@ -173,6 +213,16 @@ console.log(cartStore.selectedItems)
         }
       }
     }
+  }
+
+  /*合计金额*/
+  .totalOrder {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24rpx;
+    padding: 16rpx;
+    background-color: #fff;
   }
 
   /*订单信息区域*/

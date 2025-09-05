@@ -11,11 +11,14 @@ import { onLoad } from '@dcloudio/uni-app'
 import { useManagerStore } from '@/stores/modules/manager.ts'
 import { makeQrCodeApi } from '@/api/store.ts'
 import { ref } from 'vue'
+import type { OrderData } from '@/types/ManagerOrder'
+import { managerOrderGetApi } from '@/api/order.ts'
 
 // 定义store
 const userStore = useUserStore()
 const managerStore = useManagerStore()
 
+// 弹窗组件
 const popup = ref<InstanceType<typeof UniPopup> | null>(null)
 
 // 进页面检测店长是否绑定门店
@@ -38,6 +41,20 @@ const handleQrCode = async () => {
 const handleSaveCode = () => {
   popup.value.open()
 }
+
+// 门店库存订单记录
+const orderList = ref<OrderData[]>([])
+const orderListGet = async () => {
+  if (managerStore.managerInfo?.managerId && managerStore.managerInfo.storeId) {
+    const res = await managerOrderGetApi(
+      managerStore.managerInfo?.storeId,
+      managerStore.managerInfo?.managerId,
+    )
+    orderList.value = res.data.slice(0, 4)
+    console.log('订单', res)
+  }
+}
+onLoad(() => orderListGet())
 </script>
 
 <template>
@@ -58,7 +75,7 @@ const handleSaveCode = () => {
         <StallsList></StallsList>
         <!--   库存订单申请记录   -->
         <navigator url="/pages/orderList/orderList" open-type="navigate">
-          <OrderRecord></OrderRecord>
+          <OrderRecord :orderList="orderList"></OrderRecord>
         </navigator>
       </view>
     </scroll-view>

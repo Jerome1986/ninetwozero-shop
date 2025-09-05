@@ -210,9 +210,21 @@ export const useCartStore = defineStore(
     const selectedItems = computed(() => {
       if (!Array.isArray(cartList.value)) return []
 
-      return cartList.value.filter((brandGroup) =>
-        brandGroup.models.filter((modelGroup) => modelGroup.items.filter((item) => item.selected)),
-      )
+      return cartList.value
+        .map((brandGroup) => {
+          return {
+            ...brandGroup,
+            models: brandGroup.models
+              .map((modelGroup) => {
+                return {
+                  ...modelGroup,
+                  items: modelGroup.items.filter((item) => item.selected),
+                }
+              })
+              .filter((modelGroup) => modelGroup.items.length > 0), // 没有选中商品的型号直接剔除
+          }
+        })
+        .filter((brandGroup) => brandGroup.models.length > 0) // 没有选中型号的品牌直接剔除
     })
 
     return {

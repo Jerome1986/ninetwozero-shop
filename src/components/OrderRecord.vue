@@ -1,5 +1,16 @@
 <script setup lang="ts">
 import NavTitle from '@/components/NavTitle.vue'
+import type { OrderData } from '@/types/ManagerOrder'
+import { formatTimestamp } from '@/utils/formatTimestamp.ts'
+
+withDefaults(
+  defineProps<{
+    orderList: OrderData[]
+  }>(),
+  {
+    orderList: () => [],
+  },
+)
 </script>
 
 <template>
@@ -8,13 +19,15 @@ import NavTitle from '@/components/NavTitle.vue'
     <NavTitle title="库存订单"></NavTitle>
     <!--  订单列表  -->
     <view class="list">
-      <view class="item" v-for="item in 4" :key="item">
+      <view class="item" v-for="item in orderList" :key="item._id">
         <view class="left">
           <view class="title">库存申请</view>
-          <view class="orderTime">下单时间:2025-08-07 18:17</view>
+          <view class="orderTime">下单时间:{{ formatTimestamp(item.creatAt, 2) }}</view>
         </view>
         <!--  订单状态（备货中  待取货  已完成）  -->
-        <view class="state stateA">备货中</view>
+        <view class="state stateA" v-if="item.state === '备货中'">{{ item.state }}</view>
+        <view class="state stateB" v-if="item.state === '待取货'">{{ item.state }}</view>
+        <view class="state stateC" v-if="item.state === '已完成'">{{ item.state }}</view>
       </view>
     </view>
   </view>

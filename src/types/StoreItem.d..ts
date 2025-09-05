@@ -12,6 +12,8 @@ export type StoreItem = {
   qrCodeUrl: string
   /** 门店店长ID（收款负责人） */
   managerId: string
+  /** 店长姓名*/
+  managerName: string
   /** 上级门店ID，可选，用于管理层级关系 */
   parentStoreId?: string
   /** 创建时间 */
