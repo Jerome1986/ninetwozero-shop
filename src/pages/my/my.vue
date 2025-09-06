@@ -103,8 +103,9 @@ onLoad(async () => await Promise.all([activityStore.activityListGet(), nextVipLe
       <navigator url="/pagesMember/myVip/myVip">
         <VipCard :nextVipInfo="nextVipInfo" v-if="userStore.profile.role === 'vip'"></VipCard>
       </navigator>
-      <!-- 功能导航 -->
+      <!-- 功能导航--店长 -->
       <OrderNav v-if="userStore.profile.role === 'manager'"></OrderNav>
+      <!-- 功能导航--用户 -->
       <NavGrid v-else></NavGrid>
 
       <!--   报名申请   -->

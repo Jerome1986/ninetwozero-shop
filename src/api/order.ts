@@ -19,12 +19,28 @@ export const managerOrderAddApi = (orderData: OrderData) => {
 /**
  * 根据门店id和店长id获取库存申请订单
  * /managerOrder/byId
+ * @param {string} storeId - 门店id
+ * @param {string} managerId - 店长id
+ * @param {string} orderState - 订单状态
  */
 
-export const managerOrderGetApi = (storeId: string, managerId: string) => {
+export const managerOrderGetApi = (storeId: string, managerId: string, orderState: string = '') => {
   return request<OrderData[]>({
     method: 'GET',
     url: '/managerOrder/byId',
-    data: { storeId, managerId },
+    data: { storeId, managerId, orderState },
+  })
+}
+
+/**
+ * 根据订单id获取订单详情
+ * /managerOrder/byOrderId
+ */
+
+export const orderDetailGetApi = (orderId: string) => {
+  return request<OrderData>({
+    method: 'GET',
+    url: '/managerOrder/byOrderId',
+    data: { orderId },
   })
 }
