@@ -14,6 +14,7 @@ export const useManagerStore = defineStore(
       const res = await storeInfoGetApi(userId)
       console.log('绑定的门店信息', res)
       managerInfo.value = res.data
+      return !!res.data.managerId
     }
 
     // 记得 return

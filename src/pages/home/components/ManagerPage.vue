@@ -7,10 +7,9 @@ import StallsList from '@/components/StallsList.vue'
 import OrderRecord from '@/components/OrderRecord.vue'
 import UniPopup from '@dcloudio/uni-ui/lib/uni-popup/uni-popup.vue'
 import { useUserStore } from '@/stores'
-import { onLoad } from '@dcloudio/uni-app'
 import { useManagerStore } from '@/stores/modules/manager.ts'
 import { makeQrCodeApi } from '@/api/store.ts'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import type { OrderData } from '@/types/ManagerOrder'
 import { managerOrderGetApi } from '@/api/order.ts'
 
@@ -21,9 +20,6 @@ const managerStore = useManagerStore()
 // 弹窗组件
 const popup = ref<InstanceType<typeof UniPopup> | null>(null)
 
-// 进页面检测店长是否绑定门店
-onLoad(() => managerStore.checkUserManager(userStore.profile._id))
-
 // 点击生成收款码
 const handleQrCode = async () => {
   console.log('父组件code')
@@ -32,6 +28,8 @@ const handleQrCode = async () => {
       managerStore.managerInfo.storeId,
       managerStore.managerInfo.managerId,
     )
+
+    console.log('收款码返回', res)
   }
 
   await managerStore.checkUserManager(userStore.profile._id)
@@ -44,17 +42,22 @@ const handleSaveCode = () => {
 
 // 门店库存订单记录
 const orderList = ref<OrderData[]>([])
-const orderListGet = async () => {
-  if (managerStore.managerInfo?.managerId && managerStore.managerInfo.storeId) {
-    const res = await managerOrderGetApi(
-      managerStore.managerInfo?.storeId,
-      managerStore.managerInfo?.managerId,
-    )
-    orderList.value = res.data.slice(0, 4)
-    console.log('订单', res)
-  }
+const orderListGet = async (storeId: string, managerId: string) => {
+  const res = await managerOrderGetApi(storeId, managerId)
+  orderList.value = res.data.slice(0, 4)
+  console.log('订单', res)
 }
-onLoad(() => orderListGet())
+// 等待页面加载完毕--检测店长是否绑定门店
+onMounted(async () => {
+  let isManager
+  if (userStore.profile._id) {
+    isManager = await managerStore.checkUserManager(userStore.profile._id)
+  }
+  // 如果返回true 说明为店长则获取对应的门店信息
+  if (isManager && managerStore.managerInfo) {
+    await orderListGet(managerStore.managerInfo.storeId, managerStore.managerInfo.managerId)
+  }
+})
 </script>
 
 <template>

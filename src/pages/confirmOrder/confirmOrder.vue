@@ -47,7 +47,7 @@ const submit = async () => {
 </script>
 
 <template>
-  <scroll-view class="confirmOrder" :scroll-y="true">
+  <scroll-view class="confirmOrder" :scroll-y="true" :enhanced="true" :show-scrollbar="false">
     <view class="brand" v-for="cart in cartStore.selectedItems" :key="cart.brand">
       <!--  品牌头部   -->
       <view class="brand-title">
@@ -117,7 +117,6 @@ const submit = async () => {
 .confirmOrder {
   padding: 24rpx;
   height: 100%;
-  border: 1px solid red;
 
   .brand {
     margin-bottom: 24rpx;

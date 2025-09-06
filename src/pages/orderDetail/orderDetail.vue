@@ -22,7 +22,7 @@ onLoad((options) => {
 </script>
 
 <template>
-  <scroll-view class="confirmOrder" :scroll-y="true">
+  <scroll-view class="orderDetail" :scroll-y="true" :enhanced="true" :show-scrollbar="false">
     <view class="header">
       <view class="time">
         <text style="color: #333333">下单时间：</text>
@@ -96,10 +96,9 @@ onLoad((options) => {
 </template>
 
 <style scoped lang="scss">
-.confirmOrder {
+.orderDetail {
   padding: 24rpx;
   height: 100%;
-  border: 1px solid red;
 
   /*头部*/
   .header {
