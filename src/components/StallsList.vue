@@ -1,5 +1,10 @@
 <script setup lang="ts">
 import NavTitle from '@/components/NavTitle.vue'
+import type { StoreItem } from '@/types/StoreItem.d..ts'
+
+defineProps<{
+  businessList: StoreItem[]
+}>()
 </script>
 
 <template>
@@ -8,11 +13,11 @@ import NavTitle from '@/components/NavTitle.vue'
     <NavTitle title="摊位数据"></NavTitle>
     <!--  摊位列表  -->
     <scroll-view class="list" :scroll-x="true" :enhanced="true" :show-scrollbar="false">
-      <view class="item" v-for="item in 8" :key="item">
+      <view class="item" v-for="item in businessList" :key="item._id">
         <view class="avatar">
-          <image src="/static/images/testAvatar.jpg" mode="aspectFit"></image>
+          <image :src="item.storeLogo" mode="aspectFit"></image>
         </view>
-        <view class="name">街道口</view>
+        <view class="name">{{ item.name }}</view>
       </view>
     </scroll-view>
   </view>

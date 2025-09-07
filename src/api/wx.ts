@@ -42,3 +42,25 @@ export const wxPayApi = (
     },
   })
 }
+
+/**
+ * 门店收款支付-- 直接页面收款/扫码收款
+ * /wx/storePay
+ * @param {string} code - 用于兑换用户openid的凭证
+ * @param {string} storeId - 当前门店的id
+ * @param {number} amount - 当前支付的金额
+ * @param {string} description - 当前产品/服务的描述
+ */
+
+export const wxStorePayApi = (
+  code: string,
+  storeId: string,
+  amount: string,
+  description: string,
+) => {
+  return request<WechatPayParams>({
+    method: 'POST',
+    url: '/wx/storePay',
+    data: { code, storeId, amount, description },
+  })
+}

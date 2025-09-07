@@ -1,18 +1,16 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import type { flowTotal } from '@/types/Global'
 
-const amountList = ref([
-  { id: '1', amount: 300, time: '昨日' },
-  { id: '2', amount: 400, time: '今日' },
-  { id: '3', amount: 2100, time: '本周' },
-])
+defineProps<{
+  flowTotalList: flowTotal[]
+}>()
 </script>
 
 <template>
   <view class="AmountBar">
-    <view class="AmountItem" v-for="(item, index) in amountList" :key="index">
+    <view class="AmountItem" v-for="(item, index) in flowTotalList" :key="index">
       <view class="navItem-link"> ￥{{ item.amount.toFixed(2) }}</view>
-      <view class="name">{{ item.time }}</view>
+      <view class="name">{{ item.text }}</view>
     </view>
   </view>
 </template>

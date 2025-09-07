@@ -1,5 +1,11 @@
 <script setup lang="ts">
 import NavTitle from '@/components/NavTitle.vue'
+import type { StoreOrderFlow } from '@/types/Flow'
+import { formatTimestamp } from '@/utils/formatTimestamp.ts'
+
+defineProps<{
+  flowList: StoreOrderFlow[]
+}>()
 </script>
 
 <template>
@@ -7,13 +13,13 @@ import NavTitle from '@/components/NavTitle.vue'
     <!-- title -->
     <NavTitle title="流水"></NavTitle>
     <!-- 每一项-只渲染5项  -->
-    <view class="item" v-for="item in 4" :key="item">
+    <view class="item" v-for="item in flowList" :key="item._id">
       <!--  todo 如果可以获取用户信息增加用户头像/昵称    -->
       <view class="left">
-        <view class="dec">贴膜</view>
-        <view class="time">7月15 16:00</view>
+        <view class="dec">{{ item.description }}</view>
+        <view class="time">{{ formatTimestamp(item.createdAt, 2) }}</view>
       </view>
-      <view class="price">+￥20.00</view>
+      <view class="price">+￥{{ item.amount }}</view>
     </view>
   </view>
 </template>

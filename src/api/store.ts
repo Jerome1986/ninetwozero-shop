@@ -1,6 +1,7 @@
 import { request } from '@/utils/http.ts'
 import type { StoreItem } from '@/types/StoreItem.d..ts'
-import type { QrCode } from '@/types/Global'
+import type { inviterStoreItem, QrCode } from '@/types/Global'
+import type { StoreFlowTotal, StoreOrderFlow } from '@/types/Flow'
 
 /**
  * 根据用户id获取对应门店信息--店长时有效
@@ -28,5 +29,46 @@ export const makeQrCodeApi = (storeId: string, managerId: string) => {
     method: 'POST',
     url: '/qrCode/add',
     data: { storeId, managerId },
+  })
+}
+
+/**
+ * 获取当前用户下级门店
+ * /business/get
+ * @param {string} storeId - 当前用户绑定的门店id
+ */
+
+export const businessListApi = (storeId: string) => {
+  return request<inviterStoreItem>({
+    method: 'GET',
+    url: '/business/get',
+    data: { storeId },
+  })
+}
+
+/**
+ * 根据门店id获取当前门店流水
+ * /store/getFlow
+ * @param {string} storeId - 当前门店id
+ */
+
+export const getStoreFlowApi = (storeId: string) => {
+  return request<StoreOrderFlow[]>({
+    method: 'GET',
+    url: '/store/getFlow',
+    data: { storeId },
+  })
+}
+
+/**
+ * 获取昨日、今日、本周的流水合计
+ * /store/totalFlow
+ */
+
+export const getStoreFlowTotalApi = (storeId: string) => {
+  return request<StoreFlowTotal>({
+    method: 'GET',
+    url: '/store/totalFlow',
+    data: { storeId },
   })
 }

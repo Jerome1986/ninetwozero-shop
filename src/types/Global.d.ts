@@ -1,4 +1,5 @@
 import type { UserItem } from '@/types/UserItem'
+import type { StoreItem } from '@/types/StoreItem.d..ts'
 
 /** 通用分页结果类型 */
 export type PageResult<T> = {
@@ -51,10 +52,28 @@ export type inviterItem = {
 }
 
 /**
+ * 通用查询门店下级类型
+ */
+export type inviterStoreItem = {
+  /** 一级门店列表 */
+  firstStore: StoreItem[]
+  /** 二级门店列表 */
+  subStore: StoreItem[]
+}
+/**
  * 生成收款码返回类型
  */
 
 export type QrCode = {
   /**  返回的二维码base64 */
   dataUrl: string
+}
+
+/**
+ * 流水合计类型  今日 昨日 本周
+ */
+export type flowTotal = {
+  id: string
+  amount: number
+  text: string
 }

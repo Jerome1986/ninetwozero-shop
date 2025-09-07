@@ -8,10 +8,18 @@ import OrderRecord from '@/components/OrderRecord.vue'
 import UniPopup from '@dcloudio/uni-ui/lib/uni-popup/uni-popup.vue'
 import { useUserStore } from '@/stores'
 import { useManagerStore } from '@/stores/modules/manager.ts'
-import { makeQrCodeApi } from '@/api/store.ts'
+import {
+  businessListApi,
+  getStoreFlowApi,
+  getStoreFlowTotalApi,
+  makeQrCodeApi,
+} from '@/api/store.ts'
 import { onMounted, ref } from 'vue'
 import type { OrderData } from '@/types/ManagerOrder'
 import { managerOrderGetApi } from '@/api/order.ts'
+import type { StoreItem } from '@/types/StoreItem.d..ts'
+import type { StoreOrderFlow } from '@/types/Flow'
+import type { flowTotal } from '@/types/Global'
 
 // 定义store
 const userStore = useUserStore()
@@ -47,6 +55,36 @@ const orderListGet = async (storeId: string, managerId: string) => {
   orderList.value = res.data.slice(0, 4)
   console.log('订单', res)
 }
+
+// 获取下级门店列表
+const businessList = ref<StoreItem[]>([])
+const businessListGet = async (storeId: string) => {
+  const res = await businessListApi(storeId)
+  // 将一级和二级合并显示
+  businessList.value = [...res.data.firstStore, ...res.data.subStore]
+}
+
+// 获取当前门店昨日、今日、本周合计流水
+const flowTotalList = ref<flowTotal[]>([])
+const storeFlowTotalGet = async (storeId: string) => {
+  const res = await getStoreFlowTotalApi(storeId)
+  console.log('合计流水', res)
+  flowTotalList.value = [
+    { id: '1', amount: res.data.yesterdayTotal, text: '昨日' },
+    { id: '2', amount: res.data.todayTotal, text: '今日' },
+    { id: '3', amount: res.data.weekTotal, text: '本周' },
+  ]
+}
+
+// 获取当前门店流水
+const flowList = ref<StoreOrderFlow[]>([])
+const storeFlowGet = async (storeId: string) => {
+  const res = await getStoreFlowApi(storeId)
+  // 首页展示，只取前4条
+  flowList.value = res.data.slice(0, 4)
+  console.log('流水', res)
+}
+
 // 等待页面加载完毕--检测店长是否绑定门店
 onMounted(async () => {
   let isManager
@@ -55,6 +93,13 @@ onMounted(async () => {
   }
   // 如果返回true 说明为店长则获取对应的门店信息
   if (isManager && managerStore.managerInfo) {
+    // 当前门店合计流水
+    await storeFlowTotalGet(managerStore.managerInfo.storeId)
+    // 获取当前门店流水
+    await storeFlowGet(managerStore.managerInfo.storeId)
+    // 下级摊位列表
+    await businessListGet(managerStore.managerInfo.storeId)
+    // 当前门店库存订单
     await orderListGet(managerStore.managerInfo.storeId, managerStore.managerInfo.managerId)
   }
 })
@@ -71,11 +116,11 @@ onMounted(async () => {
       <!--  内容部分  -->
       <view class="content">
         <!-- 流水 -->
-        <AmountBar></AmountBar>
+        <AmountBar :flowTotalList="flowTotalList"></AmountBar>
         <!-- 流水明细 -->
-        <AmountDetail></AmountDetail>
+        <AmountDetail :flowList="flowList"></AmountDetail>
         <!--  下级摊位数据 -->
-        <StallsList></StallsList>
+        <StallsList :businessList="businessList"></StallsList>
         <!--   库存订单申请记录   -->
         <navigator url="/pages/orderList/orderList" open-type="navigate">
           <OrderRecord :orderList="orderList"></OrderRecord>

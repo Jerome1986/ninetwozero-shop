@@ -4,6 +4,8 @@ export type StoreItem = {
   _id: string
   /**  门店短id--用于生成收款码 */
   storeId: string
+  /** 当前门店logo */
+  storeLogo: string
   /** 门店名称 */
   name: string
   /** 门店地址 */

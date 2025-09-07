@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ref, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
+import { wxStorePayApi } from '@/api/wx.ts'
 
 // 安全距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
@@ -8,25 +9,58 @@ const { safeAreaInsets } = uni.getSystemInfoSync()
 // 默认参数
 const amount = ref<string>('')
 const storeId = ref<string>('')
-const userId = ref<string>('')
-
-// 通过二维码传过来的门店id和用户id
-onLoad((options: any) => {
-  storeId.value = options.storeId || ''
-  userId.value = options.userId || ''
-})
+const code = ref<string>('')
 
 // 实时显示本次支付金额
 const displayAmount = computed(() => amount.value || '0.00')
 
 // 点击支付
-const handlePay = () => {
+const handlePay = async () => {
   if (!amount.value) {
-    uni.showToast({ title: '请输入金额', icon: 'none' })
+    await uni.showToast({ title: '请输入金额', icon: 'none' })
     return
   }
-  uni.showToast({ title: '调起支付流程', icon: 'none' })
+  // 1.向后端发起支付请求
+  const payRes = await wxStorePayApi(code.value, storeId.value, amount.value, '贴膜')
+  console.log('payRes:', payRes)
+  // 2.通过后端返回参数、发起前端微信支付
+  wx.requestPayment({
+    timeStamp: payRes.data.timeStamp,
+    nonceStr: payRes.data.nonceStr,
+    package: payRes.data.packageValue,
+    signType: payRes.data.signType,
+    paySign: payRes.data.paySign,
+    async success(res) {
+      // 3.支付成功后-跳转页面
+      console.log('支付成功', res)
+      await uni.showToast({ icon: 'success', title: '支付成功' })
+      setTimeout(() => {
+        uni.switchTab({
+          url: '/pages/my/my',
+        })
+      }, 800)
+    },
+    fail(err) {
+      console.error('支付失败', err)
+      uni.showToast({
+        icon: 'none',
+        title: '取消支付',
+      })
+    },
+  })
 }
+
+// 通过二维码传过来的门店id和用户id
+onLoad((options: any) => {
+  storeId.value = options.storeId || ''
+  // 获取用户code
+  uni.login({
+    success: async (res) => {
+      console.log(res)
+      code.value = res.code
+    },
+  })
+})
 </script>
 
 <template>
