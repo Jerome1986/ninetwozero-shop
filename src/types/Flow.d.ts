@@ -21,11 +21,28 @@ export type StoreOrderFlow = {
 }
 
 /**
- * 获取昨日、今日、本周的流水返回类型
+ * 获取昨日、今日、本周的流水(日总和)返回类型
  */
 
 export type StoreFlowTotal = {
   todayTotal: number
   yesterdayTotal: number
   weekTotal: number
+}
+
+/**
+ * 根据条件筛选门店流水返回明细和总和
+ */
+
+export type filterFlow = {
+  /** 筛选范围  */
+  range: 'today' | 'yesterday' | 'thisWeek' | 'thisMonth' | 'month'
+  /** 开始时间 */
+  start: Date
+  /** 结束时间 */
+  end: Date
+  /** 流水明细 */
+  flowList: StoreOrderFlow[]
+  /** 流水总和 */
+  totalAmount: number
 }

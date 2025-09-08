@@ -43,3 +43,26 @@ export const formatRole = (role: string, vipLevel: number = 0): string => {
 
   return '未知角色'
 }
+
+// 获取当前年月日
+export const getRecentMonths = (n: number) => {
+  const result: { value: string; text: string }[] = []
+  const now = new Date()
+  let year = now.getFullYear()
+  let month = now.getMonth() + 1
+
+  for (let i = 0; i < n; i++) {
+    const val = `${year}-${month.toString().padStart(2, '0')}`
+    const txt = `${year}年${month.toString().padStart(2, '0')}月`
+
+    result.push({ value: val, text: txt })
+
+    month--
+    if (month === 0) {
+      month = 12
+      year--
+    }
+  }
+
+  return result
+}

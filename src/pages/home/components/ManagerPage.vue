@@ -93,14 +93,16 @@ onMounted(async () => {
   }
   // 如果返回true 说明为店长则获取对应的门店信息
   if (isManager && managerStore.managerInfo) {
-    // 当前门店合计流水
-    await storeFlowTotalGet(managerStore.managerInfo.storeId)
-    // 获取当前门店流水
-    await storeFlowGet(managerStore.managerInfo.storeId)
-    // 下级摊位列表
-    await businessListGet(managerStore.managerInfo.storeId)
-    // 当前门店库存订单
-    await orderListGet(managerStore.managerInfo.storeId, managerStore.managerInfo.managerId)
+    await Promise.all([
+      // 当前门店合计流水
+      storeFlowTotalGet(managerStore.managerInfo.storeId),
+      // 获取当前门店流水
+      storeFlowGet(managerStore.managerInfo.storeId),
+      // 下级摊位列表
+      businessListGet(managerStore.managerInfo.storeId),
+      // 当前门店库存订单
+      orderListGet(managerStore.managerInfo.storeId, managerStore.managerInfo.managerId),
+    ])
   }
 })
 </script>
@@ -115,7 +117,7 @@ onMounted(async () => {
       <ManagerHeadBar @qrCode="handleQrCode" @saveCode="handleSaveCode"></ManagerHeadBar>
       <!--  内容部分  -->
       <view class="content">
-        <!-- 流水 -->
+        <!-- 流水合计 -->
         <AmountBar :flowTotalList="flowTotalList"></AmountBar>
         <!-- 流水明细 -->
         <AmountDetail :flowList="flowList"></AmountDetail>

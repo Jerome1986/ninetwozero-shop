@@ -1,7 +1,7 @@
 import { request } from '@/utils/http.ts'
 import type { StoreItem } from '@/types/StoreItem.d..ts'
 import type { inviterStoreItem, QrCode } from '@/types/Global'
-import type { StoreFlowTotal, StoreOrderFlow } from '@/types/Flow'
+import type { filterFlow, StoreFlowTotal, StoreOrderFlow } from '@/types/Flow'
 
 /**
  * 根据用户id获取对应门店信息--店长时有效
@@ -70,5 +70,23 @@ export const getStoreFlowTotalApi = (storeId: string) => {
     method: 'GET',
     url: '/store/totalFlow',
     data: { storeId },
+  })
+}
+
+/**
+ * 根据指定日期筛选门店流水
+ * /store/RangeType
+ */
+
+export const filterFlowApi = (
+  storeId: string,
+  range: string,
+  year: number = 0,
+  month: number = 0,
+) => {
+  return request<filterFlow>({
+    method: 'GET',
+    url: '/store/RangeType',
+    data: { storeId, range, year, month },
   })
 }

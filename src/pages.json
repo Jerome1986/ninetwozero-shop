@@ -96,6 +96,13 @@
         "navigationBarTitleText": "订单详情",
         "enablePullDownRefresh": false
       }
+    },
+    {
+      "path": "pages/storeFlowDetail/storeFlowDetail",
+      "style": {
+        "navigationBarTitleText": "流水详情",
+        "enablePullDownRefresh": false
+      }
     }
   ],
   "globalStyle": {
