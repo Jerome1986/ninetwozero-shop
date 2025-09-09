@@ -4,10 +4,11 @@ import type { ProductItem } from '@/types/ProductItem'
 import { productByIdGetApi } from '@/api/product.ts'
 import { onLoad } from '@dcloudio/uni-app'
 import FooterBar from '@/pages/productDetail/components/FooterBar.vue'
-import { useCartStore } from '@/stores'
+import { useCartStore, useUserStore } from '@/stores'
 
 // 定义store
 const cartStore = useCartStore()
+const userStore = useUserStore()
 
 // 获取产品列表
 const productData = ref<ProductItem>()
@@ -30,6 +31,14 @@ onLoad(async (options) => {
 // 处理添加购物车
 const handleAddCart = () => {
   console.log('父组件addCart')
+  if (userStore.profile.role !== 'manager') {
+    return uni.showModal({
+      title: '提示',
+      content: '仅供员工使用',
+      showCancel: false,
+      confirmColor: '#d62731',
+    })
+  }
 
   if (productData.value?._id) {
     // 构建参数

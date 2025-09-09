@@ -103,6 +103,13 @@
         "navigationBarTitleText": "流水详情",
         "enablePullDownRefresh": false
       }
+    },
+    {
+      "path": "pages/businessList/businessList",
+      "style": {
+        "navigationBarTitleText": "下属门店",
+        "enablePullDownRefresh": false
+      }
     }
   ],
   "globalStyle": {
@@ -196,6 +203,13 @@
           "path": "myVip/myVip",
           "style": {
             "navigationBarTitleText": "我的会员",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "myRevenue/myRevenue",
+          "style": {
+            "navigationBarTitleText": "我的收益",
             "enablePullDownRefresh": false
           }
         }

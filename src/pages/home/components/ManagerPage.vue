@@ -29,18 +29,29 @@ const managerStore = useManagerStore()
 const popup = ref<InstanceType<typeof UniPopup> | null>(null)
 
 // 点击生成收款码
-const handleQrCode = async () => {
+const handleQrCode = () => {
   console.log('父组件code')
-  if (managerStore.managerInfo) {
-    const res = await makeQrCodeApi(
-      managerStore.managerInfo.storeId,
-      managerStore.managerInfo.managerId,
-    )
-
-    console.log('收款码返回', res)
-  }
-
-  await managerStore.checkUserManager(userStore.profile._id)
+  uni.showModal({
+    title: '提示',
+    content: '点击确定生成你的门店收款码',
+    confirmColor: '#d62731',
+    success: async (modalRes) => {
+      if (managerStore.managerInfo && modalRes.confirm) {
+        try {
+          const qrRes = await makeQrCodeApi(
+            managerStore.managerInfo.storeId,
+            managerStore.managerInfo.managerId,
+          )
+          console.log('收款码返回', qrRes)
+          await uni.showToast({ title: '生成成功', icon: 'success', mask: true })
+          await managerStore.checkUserManager(userStore.profile._id)
+        } catch (err) {
+          console.error('生成收款码失败', err)
+          await uni.showToast({ title: '生成失败，请重试', icon: 'none' })
+        }
+      }
+    },
+  })
 }
 
 // 点击保存收款码

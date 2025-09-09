@@ -1,5 +1,6 @@
 import type { UserItem } from '@/types/UserItem'
 import type { StoreItem } from '@/types/StoreItem.d..ts'
+import type { StoreOrderFlow } from '@/types/Flow'
 
 /** 通用分页结果类型 */
 export type PageResult<T> = {
@@ -57,8 +58,12 @@ export type inviterItem = {
 export type inviterStoreItem = {
   /** 一级门店列表 */
   firstStore: StoreItem[]
+  /** 所有一级门店的流水 */
+  firstFlow: StoreOrderFlow[]
   /** 二级门店列表 */
   subStore: StoreItem[]
+  /** 所有二级门店的流水 */
+  subFlow: StoreOrderFlow[]
 }
 /**
  * 生成收款码返回类型
@@ -76,4 +81,15 @@ export type flowTotal = {
   id: string
   amount: number
   text: string
+}
+
+/**
+ * 查询该门店是否有上级返回类型
+ */
+
+export type CheckStoreParentResult = {
+  /** 直属上级的门店id */
+  firstStoreId: string | null
+  /** 上级的上级的门店id */
+  secondStoreId: string | null
 }

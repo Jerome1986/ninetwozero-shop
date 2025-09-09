@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { formatTimestamp, getRecentMonths } from '@/utils/formatTimestamp.ts'
 import type { StoreOrderFlow } from '@/types/Flow'
-import { useManagerStore } from '@/stores'
-import { filterFlowApi } from '@/api/store.ts'
+import { useCommissionStore, useManagerStore } from '@/stores'
+import { checkParentStoreApi, filterFlowApi } from '@/api/store.ts'
 
 // 定义store
 const managerStore = useManagerStore()
+const commissionStore = useCommissionStore()
 
 // 默认高亮下标
 const activeIndex = ref(0)
@@ -75,6 +76,39 @@ const filterFlow = async (storeId: string, range: string, year?: number, month?:
   flowTotal.value = res.data.totalAmount
 }
 
+// 查询当前门店是否有上级，用于计算门店实际收益
+const firstStoreId = ref<string | null>(null)
+const secondStoreId = ref<string | null>(null)
+const checkParent = async (storeId: string) => {
+  const res = await checkParentStoreApi(storeId)
+  console.log('checkParent', res)
+  firstStoreId.value = res.data.firstStoreId
+  secondStoreId.value = res.data.secondStoreId
+}
+
+// 计算总收益
+const totalRevenue = computed(() => {
+  // 总营业额
+  const total = flowTotal.value
+  // 平台佣金比例
+  const platform = commissionStore.platformRate ?? 0
+  // 直属上级
+  const level1 = commissionStore.level1Rate ?? 0
+  // 上级的上级
+  const level2 = commissionStore.level2Rate ?? 0
+
+  if (!firstStoreId.value) {
+    // 没有任何上级
+    return total * (1 - platform)
+  } else if (!secondStoreId.value) {
+    // 只有直属上级
+    return total * (1 - platform - level1)
+  } else {
+    // 有两层上级
+    return total * (1 - platform - level1 - level2)
+  }
+})
+
 onLoad(() => {
   // 获取下拉框的所有选择值
   range.value = getRecentMonths(12)
@@ -83,7 +117,9 @@ onLoad(() => {
   // 默认显示今日流水
   if (managerStore.managerInfo) {
     filterFlow(managerStore.managerInfo?.storeId, 'today')
+    checkParent(managerStore.managerInfo?.storeId)
   }
+  commissionStore.commissionRoleGet()
 })
 </script>
 <template>
@@ -99,7 +135,10 @@ onLoad(() => {
           <view class="shopAddress">{{ managerStore.managerInfo?.address }}</view>
         </view>
       </view>
-      <view class="total"> 合计：￥{{ flowTotal }}</view>
+      <view class="total">
+        <text>营业额：￥{{ flowTotal.toFixed(2) }}</text>
+        <text>总收益：￥{{ totalRevenue.toFixed(2) }}</text>
+      </view>
     </view>
     <!-- 头部  -->
     <view class="header">
@@ -107,8 +146,8 @@ onLoad(() => {
       <view class="tabList">
         <view
           class="tabItem"
-          :class="{ tabActive: activeIndex === index }"
           v-for="(item, index) in tab"
+          :class="{ tabActive: activeIndex === index }"
           :key="item.id"
           @click="handleTab(item.text, index)"
           >{{ item.text }}
@@ -185,6 +224,8 @@ onLoad(() => {
     }
 
     .total {
+      display: flex;
+      flex-direction: column;
       font-size: 28rpx;
       color: $jel-font-title;
     }

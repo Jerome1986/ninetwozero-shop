@@ -6,7 +6,7 @@ const orderTypes = [
   { type: 1, text: '我的收益', icon: 'icon-shouyi1' },
   { type: 2, text: '我的库存', icon: 'icon-shenqing1' },
   { type: 3, text: '我的推荐', icon: 'icon-tuijian1' },
-  { type: 4, text: '摊位管理', icon: 'icon-guanli' },
+  { type: 4, text: '门店管理', icon: 'icon-guanli' },
 ]
 
 // 定义 store
@@ -22,7 +22,9 @@ const handleGrid = (val: string) => {
   switch (val) {
     case '我的收益':
       console.log('我的收益')
-
+      uni.navigateTo({
+        url: '/pagesMember/myRevenue/myRevenue',
+      })
       break
     case '我的库存':
       console.log('我的库存')
@@ -36,9 +38,11 @@ const handleGrid = (val: string) => {
         url: '/pagesMember/myFriends/myFriends',
       })
       break
-    case '摊位管理':
-      console.log('摊位管理')
-
+    case '门店管理':
+      console.log('门店管理')
+      uni.navigateTo({
+        url: '/pages/businessList/businessList',
+      })
       break
   }
 }

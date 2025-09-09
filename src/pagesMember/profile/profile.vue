@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
-import { useUserStore } from '@/stores'
+import { useManagerStore, useUserStore } from '@/stores'
 import { userInfoGetApi, userInfoUpdateApi } from '@/api/users.ts'
+import { updateStoreLogoApi } from '@/api/store.ts'
 
 // 定义store
 const userStore = useUserStore()
+const managerStore = useManagerStore()
 
 // 构建基础数据
 const userData = ref({
@@ -59,6 +61,7 @@ const chooseAvatar = (e: any) => {
 // 点击保存
 const onsubmit = async () => {
   console.log('onsubmit', userData.value)
+  // 更新用户信息
   const res = await userInfoUpdateApi(
     userStore.profile._id,
     userData.value.mobile,
@@ -72,6 +75,12 @@ const onsubmit = async () => {
       icon: 'success',
       title: '更新成功',
     })
+
+    // 将头像同步到门店logo 共用
+    if (userStore.profile.role === 'manager' && managerStore.managerInfo) {
+      await updateStoreLogoApi(userData.value.avatarUrl, managerStore.managerInfo.storeId)
+    }
+
     setTimeout(() => {
       uni.navigateBack()
     }, 800)

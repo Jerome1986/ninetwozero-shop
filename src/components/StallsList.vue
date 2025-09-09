@@ -5,10 +5,17 @@ import type { StoreItem } from '@/types/StoreItem.d..ts'
 defineProps<{
   businessList: StoreItem[]
 }>()
+
+// 处理跳转
+const handleNav = () => {
+  uni.navigateTo({
+    url: '/pages/businessList/businessList',
+  })
+}
 </script>
 
 <template>
-  <view class="stallsList">
+  <view class="stallsList" @click="handleNav">
     <!-- title -->
     <NavTitle title="摊位数据"></NavTitle>
     <!--  摊位列表  -->

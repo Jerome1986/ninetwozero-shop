@@ -1,6 +1,6 @@
 <script setup lang="ts">
 //获取安全距离
-import { useCartStore, useUserStore } from '@/stores'
+import { useCartStore } from '@/stores'
 
 const { safeAreaInsets } = uni.getSystemInfoSync()
 
@@ -9,37 +9,19 @@ defineProps<{
 }>()
 
 // 定义store
-const userStore = useUserStore()
 const cartStore = useCartStore()
-
-// 店长验证函数
-const managerVerification = () => {
-  if (userStore.profile.role !== 'manager') {
-    return uni.showModal({
-      title: '提示',
-      content: '仅供员工使用',
-      showCancel: false,
-      confirmColor: '#d62731',
-    })
-  }
-}
 
 const emits = defineEmits(['addCart'])
 
 // 加入库存
 const addCart = () => {
   console.log('子组件addCart')
-  // 1.验证身份
-  managerVerification()
-  // 2.提交事件
   emits('addCart')
 }
 
 // 立即添加
 const buyNow = () => {
   console.log('buyNow')
-  // 1.验证身份
-  managerVerification()
 }
 
 // 处理我想要
