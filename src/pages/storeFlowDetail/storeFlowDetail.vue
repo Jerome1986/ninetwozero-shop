@@ -97,7 +97,10 @@ const totalRevenue = computed(() => {
   // 上级的上级
   const level2 = commissionStore.level2Rate ?? 0
 
-  if (!firstStoreId.value) {
+  if (total < 0) {
+    console.log('合计', flowTotal.value)
+    return 0
+  } else if (!firstStoreId.value) {
     // 没有任何上级
     return total * (1 - platform)
   } else if (!secondStoreId.value) {
@@ -172,7 +175,8 @@ onLoad(() => {
           <view class="dec">{{ item.description }}</view>
           <view class="time">时间：{{ formatTimestamp(item.createdAt, 2) }}</view>
         </view>
-        <view class="price">+￥{{ item.amount }}</view>
+        <view class="price" v-if="item.type === 'income'">+￥{{ item.amount }}</view>
+        <view class="price" v-else>-￥{{ item.amount }}</view>
       </view>
     </view>
     <!-- 流水空状态 -->

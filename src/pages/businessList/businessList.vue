@@ -4,7 +4,7 @@ import { businessListApi } from '@/api/store.ts'
 import { computed, ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { useCommissionStore, useManagerStore } from '@/stores'
-import type { StoreOrderFlow } from '@/types/Flow'
+import type { CommissionTask } from '@/types/Flow'
 
 // 定义store
 const managerStore = useManagerStore()
@@ -14,11 +14,11 @@ const firstBusinessList = ref<StoreItem[]>([])
 // 二级门店
 const subBusinessList = ref<StoreItem[]>([])
 // 一级流水
-const firstFlow = ref<StoreOrderFlow[]>([])
+const firstFlow = ref<CommissionTask[]>([])
 // 二级流水
-const subFlow = ref<StoreOrderFlow[]>([])
+const subFlow = ref<CommissionTask[]>([])
 // 总流水表
-const flowList = ref<StoreOrderFlow[]>([])
+const flowList = ref<CommissionTask[]>([])
 // 获取下级门店列表
 const businessListGet = async (storeId: string) => {
   const res = await businessListApi(storeId)

@@ -17,6 +17,24 @@ export const managerOrderAddApi = (orderData: OrderData) => {
 }
 
 /**
+ * 根据库存订单同步更新订单流水
+ * /store/updateFlow
+ */
+
+export const managerOrderUpdateFlowApi = (
+  storeId: string,
+  description: string,
+  type: 'income' | 'expense',
+  amount: number,
+) => {
+  return request<AddResult>({
+    method: 'POST',
+    url: '/store/updateFlow',
+    data: { storeId, description, type, amount },
+  })
+}
+
+/**
  * 根据门店id和店长id获取库存申请订单
  * /managerOrder/byId
  * @param {string} storeId - 门店id

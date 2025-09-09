@@ -21,6 +21,27 @@ export type StoreOrderFlow = {
 }
 
 /**
+ * 佣金流水返回类型
+ */
+
+export type CommissionTask = {
+  /** 佣金表唯一id标识 */
+  _id: string
+  /** 对应的交易订单号 */
+  outTradeNo: string
+  /** 发生交易的门店id */
+  storeId: string
+  /** 交易金额 */
+  amount: number
+  /** 对应产品描述 */
+  description: string
+  /** 佣金结算状态 */
+  status: 'pending' | 'completed'
+  /** 订单创建时间 */
+  createdAt: Date
+}
+
+/**
  * 获取昨日、今日、本周的流水(日总和)返回类型
  */
 

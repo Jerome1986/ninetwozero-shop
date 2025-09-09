@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useCartStore, useManagerStore } from '@/stores'
 import { ref } from 'vue'
-import { managerOrderAddApi } from '@/api/order.ts'
+import { managerOrderAddApi, managerOrderUpdateFlowApi } from '@/api/order.ts'
 import type { OrderData } from '@/types/ManagerOrder'
 
 // 安全距离
@@ -30,10 +30,18 @@ const submit = async () => {
   console.log('提交')
   const res = await managerOrderAddApi(orderData.value)
   if (res.data.insertedId) {
+    const updateFlow = await managerOrderUpdateFlowApi(
+      orderData.value.storeId,
+      '补货',
+      'expense',
+      orderData.value.total,
+    )
     await uni.showToast({
       icon: 'success',
       title: '下单成功',
     })
+
+    console.log('流水更新', updateFlow)
     // 清空购物车
     cartStore.clearCart()
     // 跳转到首页

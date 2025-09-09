@@ -20,6 +20,7 @@ import { managerOrderGetApi } from '@/api/order.ts'
 import type { StoreItem } from '@/types/StoreItem.d..ts'
 import type { StoreOrderFlow } from '@/types/Flow'
 import type { flowTotal } from '@/types/Global'
+import { onShow } from '@dcloudio/uni-app'
 
 // 定义store
 const userStore = useUserStore()
@@ -96,26 +97,44 @@ const storeFlowGet = async (storeId: string) => {
   console.log('流水', res)
 }
 
-// 等待页面加载完毕--检测店长是否绑定门店
+// --------------------
+// 页面初始化逻辑（只跑一次）
+// --------------------
 onMounted(async () => {
-  let isManager
-  if (userStore.profile._id) {
-    isManager = await managerStore.checkUserManager(userStore.profile._id)
-  }
-  // 如果返回true 说明为店长则获取对应的门店信息
+  if (!userStore.profile._id) return
+
+  // 判断是否是店长（只需要跑一次，不必每次 onShow 再查）
+  const isManager = await managerStore.checkUserManager(userStore.profile._id)
+
   if (isManager && managerStore.managerInfo) {
-    await Promise.all([
-      // 当前门店合计流水
-      storeFlowTotalGet(managerStore.managerInfo.storeId),
-      // 获取当前门店流水
-      storeFlowGet(managerStore.managerInfo.storeId),
-      // 下级摊位列表
-      businessListGet(managerStore.managerInfo.storeId),
-      // 当前门店库存订单
-      orderListGet(managerStore.managerInfo.storeId, managerStore.managerInfo.managerId),
-    ])
+    // 初始化一次业务数据
+    await refreshStoreData()
   }
 })
+
+// --------------------
+// 页面显示逻辑
+// --------------------
+onShow(() => {
+  if (managerStore.managerInfo) {
+    refreshStoreData()
+  }
+})
+
+// --------------------
+// 公共方法：刷新门店数据
+// --------------------
+const refreshStoreData = async () => {
+  const storeId = managerStore.managerInfo.storeId
+  const managerId = managerStore.managerInfo.managerId
+
+  await Promise.all([
+    storeFlowTotalGet(storeId), // 昨日/今日/本周流水
+    storeFlowGet(storeId), // 流水列表
+    orderListGet(storeId, managerId), // 门店库存订单
+    businessListGet(storeId), // 下级摊位
+  ])
+}
 </script>
 
 <template>

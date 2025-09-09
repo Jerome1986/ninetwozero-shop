@@ -1,6 +1,6 @@
 import type { UserItem } from '@/types/UserItem'
 import type { StoreItem } from '@/types/StoreItem.d..ts'
-import type { StoreOrderFlow } from '@/types/Flow'
+import type { CommissionTask } from '@/types/Flow'
 
 /** 通用分页结果类型 */
 export type PageResult<T> = {
@@ -59,11 +59,11 @@ export type inviterStoreItem = {
   /** 一级门店列表 */
   firstStore: StoreItem[]
   /** 所有一级门店的流水 */
-  firstFlow: StoreOrderFlow[]
+  firstFlow: CommissionTask[]
   /** 二级门店列表 */
   subStore: StoreItem[]
   /** 所有二级门店的流水 */
-  subFlow: StoreOrderFlow[]
+  subFlow: CommissionTask[]
 }
 /**
  * 生成收款码返回类型

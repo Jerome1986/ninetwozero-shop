@@ -17,6 +17,8 @@ export type Applicant = {
 export type OrderData = {
   /** 订单列表id */
   _id?: string
+  /** 订单编号 */
+  outTradeNo?: string
   /** 门店id */
   storeId?: string
   /** 店长id */
@@ -28,7 +30,7 @@ export type OrderData = {
   /**  订单联系人信息 */
   applicant: Applicant
   /** 订单状态  -- 备货中  待取货  已完成  已取消  */
-  state?: string
+  state?: '备货中' | '待取货' | '已完成' | '已取消'
   /** 下单时间 */
   creatAt?: Date
 }

@@ -29,8 +29,9 @@ onLoad(async (options) => {
 })
 
 // 处理添加购物车
-const handleAddCart = () => {
-  console.log('父组件addCart')
+const isAdding = ref(false)
+
+const handleAddCart = async (val: string) => {
   if (userStore.profile.role !== 'manager') {
     return uni.showModal({
       title: '提示',
@@ -40,24 +41,35 @@ const handleAddCart = () => {
     })
   }
 
-  if (productData.value?._id) {
-    // 构建参数
+  if (!productData.value?._id || isAdding.value) return
+  isAdding.value = true
+
+  try {
     const cartItem = {
-      id: productData.value?._id,
+      id: productData.value._id,
       selected: true,
-      imageUrl: productData.value?.cover,
-      name: productData.value?.name,
-      description: productData.value?.dec,
-      unitPrice: productData.value?.currentPrice,
+      imageUrl: productData.value.cover,
+      name: productData.value.name,
+      description: productData.value.dec,
+      unitPrice: productData.value.currentPrice,
       quantity: 1,
     }
+    cartStore.addCartItem(productData.value.brand, productData.value.model, cartItem)
 
-    // 添加购物车 - 新结构不需要传入cartList参数
-    cartStore.addCartItem(productData.value?.brand, productData.value?.model, cartItem)
+    await uni.showToast({
+      icon: 'success',
+      title: val === 'nowAdd' ? '已入库，正在跳转…' : '已加入库存',
+      mask: true,
+    })
 
-    setTimeout(() => {
-      uni.showToast({ icon: 'success', title: '已入库', mask: true })
-    }, 300)
+    if (val === 'nowAdd') {
+      // 保证 toast 展示完后再跳转
+      setTimeout(() => {
+        uni.switchTab({ url: '/pages/warehouse/warehouse' })
+      }, 500)
+    }
+  } finally {
+    isAdding.value = false
   }
 }
 </script>
@@ -114,7 +126,11 @@ const handleAddCart = () => {
     </view>
 
     <!-- 底部操作栏 -->
-    <FooterBar :cateType="cateType" @addCart="handleAddCart"></FooterBar>
+    <FooterBar
+      :cateType="cateType"
+      @addCart="handleAddCart('addCart')"
+      @nowAdd="handleAddCart('nowAdd')"
+    ></FooterBar>
   </scroll-view>
 </template>
 

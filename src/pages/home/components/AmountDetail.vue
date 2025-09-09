@@ -23,12 +23,12 @@ const handleFlowDetail = () => {
     <view class="list" v-if="flowList.length > 0">
       <!-- 每一项-只渲染5项  -->
       <view class="item" v-for="item in flowList" :key="item._id">
-        <!--  todo 如果可以获取用户信息增加用户头像/昵称    -->
         <view class="left">
           <view class="dec">{{ item.description }}</view>
           <view class="time">时间：{{ formatTimestamp(item.createdAt, 2) }}</view>
         </view>
-        <view class="price">+￥{{ item.amount }}</view>
+        <view class="price" v-if="item.type === 'income'">+￥{{ item.amount }}</view>
+        <view class="price" v-else>-￥{{ item.amount }}</view>
       </view>
     </view>
     <!-- 流水空状态 -->

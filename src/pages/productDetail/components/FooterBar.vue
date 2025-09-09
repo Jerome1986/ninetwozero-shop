@@ -11,7 +11,7 @@ defineProps<{
 // 定义store
 const cartStore = useCartStore()
 
-const emits = defineEmits(['addCart'])
+const emits = defineEmits(['addCart', 'nowAdd'])
 
 // 加入库存
 const addCart = () => {
@@ -22,6 +22,7 @@ const addCart = () => {
 // 立即添加
 const buyNow = () => {
   console.log('buyNow')
+  emits('nowAdd')
 }
 
 // 处理我想要
