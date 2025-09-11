@@ -4,6 +4,7 @@ import type { WechatPayParams } from '@/types/WechatPay'
 /**
  * 微信统一下单接口
  * /wx/pay
+ * @param{string} orderNo - 用户用来查询的订单号
  * @param {string} userId - 当前用户id
  * @param {string} vipId - 当前vip的产品id
  * @param {number} vipLevel - 会员等级
@@ -16,6 +17,7 @@ import type { WechatPayParams } from '@/types/WechatPay'
  */
 
 export const wxPayApi = (
+  orderNo: string,
   userId: string,
   vipId: string,
   vipLevel: number,
@@ -30,6 +32,7 @@ export const wxPayApi = (
     method: 'POST',
     url: '/wx/pay',
     data: {
+      orderNo,
       userId,
       vipId,
       vipLevel,

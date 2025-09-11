@@ -8,6 +8,8 @@ import { onLoad } from '@dcloudio/uni-app'
 import { formatRole } from '@/utils/formatTimestamp.ts'
 import { wxPayApi } from '@/api/wx.ts'
 import { userInfoGetApi } from '@/api/users.ts'
+import { orderCancelledApi } from '@/api/order.ts'
+import { generateOrderNo } from '@/utils/randomOrderNo.ts'
 
 // 获取系统参数计算安全距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
@@ -44,10 +46,12 @@ const handleSelected = (item: VipItem, index: number) => {
 // 点击立即购买
 const buyNow = async () => {
   console.log('buyNow', currentVip.value)
-
+  // 随机生成订单号--用于前端查询
+  const orderNo = generateOrderNo('user')
   // 1.向后端发起支付请求
   if (currentVip.value?._id) {
     const payRes = await wxPayApi(
+      orderNo,
       userStore.profile._id,
       currentVip.value._id,
       currentVip.value.level,
@@ -72,10 +76,18 @@ const buyNow = async () => {
         console.log('支付成功', res)
         const { openid, ...newData } = userRes.data
         userStore.setProfile(newData)
+        // 支付成功提示+跳转
+        setTimeout(() => {
+          uni.showToast({ icon: 'success', title: '支付成功' })
+          uni.switchTab({ url: '/pages/my/my' })
+        }, 800)
       },
-      fail(err) {
+      async fail(err) {
+        // 直接更新订单为已取消
         console.error('支付失败', err)
-        uni.showToast({
+        const res = await orderCancelledApi(orderNo)
+        console.log('取消支付结果', res)
+        await uni.showToast({
           icon: 'none',
           title: '取消支付',
         })

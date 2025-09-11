@@ -28,6 +28,22 @@ export const formatGender = (gender: number) => {
   }
 }
 
+// 订单状态转换
+export const formatOrderState = (state: string) => {
+  switch (state) {
+    case 'PENDING':
+      return '待支付'
+    case 'PAID':
+      return '已支付'
+    case 'CANCELLED':
+      return '已取消'
+    case 'REFUNDED':
+      return '已退款'
+    default:
+      return '全部'
+  }
+}
+
 // 角色转换
 export const formatRole = (role: string, vipLevel: number = 0): string => {
   const vipMap: Record<number, string> = {

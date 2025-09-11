@@ -1,6 +1,7 @@
 import { request } from '@/utils/http.ts'
 import type { OrderData } from '@/types/ManagerOrder'
-import type { AddResult } from '@/types/Global'
+import type { AddResult, UpdateResult } from '@/types/Global'
+import type { VipOrderItem } from '@/types/VipOrderItem.ts'
 
 /**
  * 店长提交库存订单
@@ -53,6 +54,7 @@ export const managerOrderGetApi = (storeId: string, managerId: string, orderStat
 /**
  * 根据订单id获取订单详情
  * /managerOrder/byOrderId
+ * @param {string} orderId - 订单id
  */
 
 export const orderDetailGetApi = (orderId: string) => {
@@ -60,5 +62,34 @@ export const orderDetailGetApi = (orderId: string) => {
     method: 'GET',
     url: '/managerOrder/byOrderId',
     data: { orderId },
+  })
+}
+
+/**
+ * 用户获取会员订单
+ * /vipOrder/get
+ * @param {string} userId - 当前用户id
+ * @param {string} status - 当前订单状态
+ */
+
+export const userVipOrderGetApi = (userId: string, status: string) => {
+  return request<VipOrderItem[]>({
+    method: 'GET',
+    url: '/vipOrder/get',
+    data: { userId, status },
+  })
+}
+
+/**
+ * 用户取消支付时同步当前订单为已取消
+ * /vipOrder/update/cancelled
+ * @param {string} orderNo - 当前订单号
+ */
+
+export const orderCancelledApi = (orderNo: string) => {
+  return request<UpdateResult>({
+    method: 'POST',
+    url: '/vipOrder/update/cancelled',
+    data: { orderNo },
   })
 }
