@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { businessListApi, checkParentStoreApi, filterFlowApi } from '@/api/store.ts'
 import { useCommissionStore, useManagerStore } from '@/stores'
-import type { CommissionTask } from '@/types/Flow'
+import type { CommissionTask, StoreOrderFlow } from '@/types/Flow'
 import type { StoreItem } from '@/types/StoreItem.d..ts'
 
 // 定义store
@@ -21,11 +21,27 @@ const selfStore = ref({
 
 // 自营门店合计营业额
 const flowTotal = ref<number>(0)
+
+const flowList = ref<StoreOrderFlow[]>([])
+const incomeFLow = ref<StoreOrderFlow[]>([])
+const expenseFlow = ref<StoreOrderFlow[]>([])
+// 收入总和和支出总和
+const incomeTotal = computed(() => {
+  return incomeFLow.value.reduce((sum, item) => sum + item.amount, 0)
+})
+const expenseTotal = computed(() => {
+  return expenseFlow.value.reduce((sum, item) => sum + item.amount, 0)
+})
+
+// 根据条件筛选门店流水
 const filterFlow = async (storeId: string, range: string, year?: number, month?: number) => {
   const res = await filterFlowApi(storeId, range, year, month)
   console.log('筛选结果', res)
-  flowTotal.value = res.data.totalAmount
-  return res.data.totalAmount
+  flowList.value = res.data.flowList
+  incomeFLow.value = flowList.value.filter((flow) => flow.type === 'income')
+  expenseFlow.value = flowList.value.filter((flow) => flow.type === 'expense')
+  let filterFlow = flowList.value.filter((item) => item.type === 'income')
+  return filterFlow.reduce((sum, flow) => sum + flow.amount, 0)
 }
 
 // 一级流水
@@ -33,7 +49,7 @@ const firstFlow = ref<CommissionTask[]>([])
 // 二级流水
 const subFlow = ref<CommissionTask[]>([])
 // 下级所有的流水列表
-const flowList = ref<CommissionTask[]>([])
+const subflowList = ref<CommissionTask[]>([])
 const businessList = ref<StoreItem[]>([])
 // 获取下级门店和下级门店流水列表
 const businessListGet = async (storeId: string) => {
@@ -46,7 +62,7 @@ const businessListGet = async (storeId: string) => {
   // 二级流水
   subFlow.value = res.data.subFlow
   // 将一级和二级的流水合并
-  flowList.value = [...res.data.firstFlow, ...res.data.subFlow]
+  subflowList.value = [...res.data.firstFlow, ...res.data.subFlow]
 }
 
 // 查询当前门店是否有上级，用于计算门店实际收益
@@ -61,25 +77,28 @@ const checkParent = async (storeId: string) => {
 
 // 计算自营门店总收益
 const totalSelfRevenue = computed(() => {
-  // 总营业额
-  const total = flowTotal.value
-  // 平台佣金比例
-  const platform = commissionStore.platformRate ?? 0
-  // 直属上级
-  const level1 = commissionStore.level1Rate ?? 0
-  // 上级的上级
-  const level2 = commissionStore.level2Rate ?? 0
+  const income = incomeTotal.value
+  const expense = expenseTotal.value
 
-  if (!firstStoreId.value) {
-    // 没有任何上级
-    return total * (1 - platform)
-  } else if (!secondStoreId.value) {
-    // 只有直属上级
-    return total * (1 - platform - level1)
-  } else {
-    // 有两层上级
-    return total * (1 - platform - level1 - level2)
-  }
+  const platformRate = commissionStore.platformRate ?? 0
+  const level1Rate = commissionStore.level1Rate ?? 0
+  const level2Rate = commissionStore.level2Rate ?? 0
+
+  if (income <= 0) return 0
+
+  // 平台佣金
+  const platformFee = income * platformRate
+
+  // 上下级佣金
+  let upstreamFee = 0
+  if (firstStoreId.value) upstreamFee += income * level1Rate
+  if (secondStoreId.value) upstreamFee += income * level2Rate
+
+  // 总收益
+  const net = income - platformFee - upstreamFee - expense
+  console.log('总收益', net)
+  // 保留两位小数
+  return Math.round(net * 100) / 100
 })
 
 // 计算下级门店总收益
@@ -97,7 +116,7 @@ const totalRevenue = computed(() => {
 
 // 计算单个店流水的总和
 const shopItemTotal = (storeId: string) => {
-  const filterFlow = flowList.value.filter((flow) => flow.storeId === storeId)
+  const filterFlow = subflowList.value.filter((flow) => flow.storeId === storeId)
   return filterFlow.reduce((sum, item) => sum + item.amount, 0)
 }
 

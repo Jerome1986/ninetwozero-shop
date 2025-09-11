@@ -43,6 +43,16 @@ const handleTab = (text: string, index: number) => {
 
 // 流水列表
 const flowList = ref<StoreOrderFlow[]>([])
+const incomeFLow = ref<StoreOrderFlow[]>([])
+const expenseFlow = ref<StoreOrderFlow[]>([])
+
+// 收入总和和支出总和
+const incomeTotal = computed(() => {
+  return incomeFLow.value.reduce((sum, item) => sum + item.amount, 0)
+})
+const expenseTotal = computed(() => {
+  return expenseFlow.value.reduce((sum, item) => sum + item.amount, 0)
+})
 
 // 绑定选中的 value，例如 '2025-09'
 const value = ref('')
@@ -74,6 +84,9 @@ const filterFlow = async (storeId: string, range: string, year?: number, month?:
   console.log('筛选结果', res)
   flowList.value = res.data.flowList
   flowTotal.value = res.data.totalAmount
+  console.log('收入合计', flowTotal.value)
+  incomeFLow.value = flowList.value.filter((flow) => flow.type === 'income')
+  expenseFlow.value = flowList.value.filter((flow) => flow.type === 'expense')
 }
 
 // 查询当前门店是否有上级，用于计算门店实际收益
@@ -88,28 +101,28 @@ const checkParent = async (storeId: string) => {
 
 // 计算总收益
 const totalRevenue = computed(() => {
-  // 总营业额
-  const total = flowTotal.value
-  // 平台佣金比例
-  const platform = commissionStore.platformRate ?? 0
-  // 直属上级
-  const level1 = commissionStore.level1Rate ?? 0
-  // 上级的上级
-  const level2 = commissionStore.level2Rate ?? 0
+  const income = incomeTotal.value
+  const expense = expenseTotal.value
 
-  if (total < 0) {
-    console.log('合计', flowTotal.value)
-    return 0
-  } else if (!firstStoreId.value) {
-    // 没有任何上级
-    return total * (1 - platform)
-  } else if (!secondStoreId.value) {
-    // 只有直属上级
-    return total * (1 - platform - level1)
-  } else {
-    // 有两层上级
-    return total * (1 - platform - level1 - level2)
-  }
+  const platformRate = commissionStore.platformRate ?? 0
+  const level1Rate = commissionStore.level1Rate ?? 0
+  const level2Rate = commissionStore.level2Rate ?? 0
+
+  if (income <= 0) return 0
+
+  // 平台佣金
+  const platformFee = income * platformRate
+
+  // 上下级佣金
+  let upstreamFee = 0
+  if (firstStoreId.value) upstreamFee += income * level1Rate
+  if (secondStoreId.value) upstreamFee += income * level2Rate
+
+  // 总收益
+  const net = income - platformFee - upstreamFee - expense
+  console.log('总收益', net)
+  // 保留两位小数
+  return Math.round(net * 100) / 100
 })
 
 onLoad(() => {
@@ -139,8 +152,9 @@ onLoad(() => {
         </view>
       </view>
       <view class="total">
-        <text>营业额：￥{{ flowTotal.toFixed(2) }}</text>
-        <text>总收益：￥{{ totalRevenue.toFixed(2) }}</text>
+        <view class="summary-income">收入：￥{{ incomeTotal.toFixed(2) }}</view>
+        <view class="summary-expense">支出：￥{{ expenseTotal.toFixed(2) }}</view>
+        <view class="revenue">收益：￥{{ totalRevenue.toFixed(2) }}</view>
       </view>
     </view>
     <!-- 头部  -->
@@ -230,7 +244,7 @@ onLoad(() => {
     .total {
       display: flex;
       flex-direction: column;
-      font-size: 28rpx;
+      font-size: 24rpx;
       color: $jel-font-title;
     }
   }
