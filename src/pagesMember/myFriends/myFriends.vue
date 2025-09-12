@@ -25,11 +25,17 @@ const totalFriends = computed(() => {
 // 根据自身邀请码查询好友
 const friendsListGet = async (referralCode: string) => {
   const res = await userInviteGetApi(referralCode)
-  firstFriends.value = res.data.firstLevel
-  subFriends.value = res.data.subLevel
+  if (res.code === 200) {
+    firstFriends.value = res.data.firstLevel
+    subFriends.value = res.data.subLevel
+  }
 }
 
-onLoad(() => friendsListGet(userStore.profile.referralCode))
+onLoad(() => {
+  if (userStore.profile) {
+    friendsListGet(userStore.profile.referralCode)
+  }
+})
 
 // 没有更多
 const noMore = computed(() => {
@@ -38,7 +44,7 @@ const noMore = computed(() => {
 
 //  发送给朋友-生命周期钩子--不为普通函数，请注意
 onShareAppMessage((res) => {
-  if (res.from === 'button') {
+  if (res.from === 'button' && userStore.profile) {
     // 来自页面内按钮
     return {
       title: '通过按钮分享的专属海报',

@@ -34,6 +34,7 @@ const handlePay = async () => {
       // 3.支付成功后-跳转页面
       console.log('支付成功', res)
       await uni.showToast({ icon: 'success', title: '支付成功' })
+      // todo 重新获取支付成功后的订单 跳转到订单详情页 传订单号过去
       setTimeout(() => {
         uni.switchTab({
           url: '/pages/my/my',
@@ -50,13 +51,20 @@ const handlePay = async () => {
   })
 }
 
-// 通过二维码传过来的门店id和用户id
+// 通过二维码传过来的门店id
 onLoad((options: any) => {
-  storeId.value = options.storeId || ''
-  // 获取用户code
+  console.log('pay onLoad options:', options)
+  const scene = decodeURIComponent(options.scene || '')
+
+  if (scene) {
+    const parts = scene.split('=')
+    storeId.value = parts[1] || ''
+  }
+  console.log('storeId:', storeId)
+  // 获取用户 code
   uni.login({
     success: async (res) => {
-      console.log(res)
+      console.log('uni.login:', res)
       code.value = res.code
     },
   })

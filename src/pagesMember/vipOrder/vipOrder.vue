@@ -36,6 +36,14 @@ const vipOrderListGet = async (userId: string, status: string) => {
   console.log('订单列表', res)
 }
 
+// 跳转订单详情
+const handleGoDetail = (orderNo: string) => {
+  console.log(orderNo)
+  uni.navigateTo({
+    url: `/pagesMember/userOrderDetail/userOrderDetail?orderNo=${orderNo}`,
+  })
+}
+
 // 处理再次购买
 const handleAgainBuy = async (orderItem: VipOrderItem) => {
   console.log(orderItem)
@@ -109,8 +117,19 @@ onLoad(() => vipOrderListGet(userStore.profile._id, 'ALL'))
     </view>
 
     <!-- 订单列表 -->
-    <scroll-view class="list" :scroll-y="true" :enhanced="true" :show-scrollbar="false">
-      <view class="order-card" v-for="item in orderList" :key="item._id">
+    <scroll-view
+      class="list"
+      :scroll-y="true"
+      :enhanced="true"
+      :show-scrollbar="false"
+      v-if="orderList.length > 0"
+    >
+      <view
+        class="order-card"
+        v-for="item in orderList"
+        :key="item._id"
+        @click="handleGoDetail(item.out_trade_no)"
+      >
         <!-- 头部：会员级别 + 状态 -->
         <view class="card-head">
           <view class="left">
@@ -174,7 +193,7 @@ onLoad(() => vipOrderListGet(userStore.profile._id, 'ALL'))
             <view
               class="btn primary"
               v-if="item.status === 'CANCELLED'"
-              @click="handleAgainBuy(item)"
+              @click.stop="handleAgainBuy(item)"
               >再次购买
             </view>
           </view>
@@ -183,6 +202,11 @@ onLoad(() => vipOrderListGet(userStore.profile._id, 'ALL'))
 
       <view class="bottom-space"></view>
     </scroll-view>
+    <!-- 购物车空状态 -->
+    <view class="cart-blank" v-else>
+      <image src="/static/images/empty.png" class="image" />
+      <text class="text">当前没有任何订单</text>
+    </view>
   </view>
 </template>
 
@@ -401,6 +425,37 @@ onLoad(() => vipOrderListGet(userStore.profile._id, 'ALL'))
 
   .bottom-space {
     height: 80rpx;
+  }
+
+  // 空状态
+  .cart-blank {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 60vh;
+
+    .image {
+      width: 160rpx;
+      height: 200rpx;
+    }
+
+    .text {
+      color: $jel-font-title;
+      font-size: 26rpx;
+      margin: 20rpx 0;
+    }
+
+    .button {
+      width: 240rpx !important;
+      height: 60rpx;
+      line-height: 60rpx;
+      margin-top: 20rpx;
+      font-size: 26rpx;
+      border-radius: 60rpx;
+      color: #fff;
+      background-color: $jel-brandColor;
+    }
   }
 }
 </style>

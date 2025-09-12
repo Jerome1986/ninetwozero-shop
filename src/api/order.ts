@@ -93,3 +93,16 @@ export const orderCancelledApi = (orderNo: string) => {
     data: { orderNo },
   })
 }
+
+/**
+ * 根据订单id获取用户vip订单详情
+ * /vipOrder/detail
+ */
+
+export const vipOrderDetailGetApi = (out_trade_no: string) => {
+  return request<VipOrderItem>({
+    method: 'GET',
+    url: '/vipOrder/detail',
+    data: { out_trade_no },
+  })
+}

@@ -125,15 +125,17 @@ onShow(() => {
 // 公共方法：刷新门店数据
 // --------------------
 const refreshStoreData = async () => {
-  const storeId = managerStore.managerInfo.storeId
-  const managerId = managerStore.managerInfo.managerId
+  if (managerStore.managerInfo) {
+    const storeId = managerStore.managerInfo.storeId
+    const managerId = managerStore.managerInfo.managerId
 
-  await Promise.all([
-    storeFlowTotalGet(storeId), // 昨日/今日/本周流水
-    storeFlowGet(storeId), // 流水列表
-    orderListGet(storeId, managerId), // 门店库存订单
-    businessListGet(storeId), // 下级摊位
-  ])
+    await Promise.all([
+      storeFlowTotalGet(storeId), // 昨日/今日/本周流水
+      storeFlowGet(storeId), // 流水列表
+      orderListGet(storeId, managerId), // 门店库存订单
+      businessListGet(storeId), // 下级摊位
+    ])
+  }
 }
 </script>
 

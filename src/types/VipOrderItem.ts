@@ -5,6 +5,8 @@
 export type VipOrderItem = {
   /** vip订单数据库id-唯一标识*/
   _id: string
+  /** 自己平台的订单号 */
+  orderNo: string
   /** 订单唯一标识（可用后端生成，格式可自定义，如 WX + 时间戳 + 随机数）*/
   out_trade_no: string
   /** 用户唯一标识（购买该会员的用户） */

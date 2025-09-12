@@ -87,12 +87,15 @@ const handleAddCart = async (val: string) => {
     <view class="info-section">
       <view class="price-row">
         <view class="left">
-          <view class="price">
-            <text class="symbol">￥</text>
-            <text class="number">{{ productData?.currentPrice.toFixed(2) }}</text>
-            <!--            <text class="number">非卖品</text>-->
+          <view v-if="userStore.profile.role === 'manager'">
+            <view class="price">
+              <text class="symbol">￥</text>
+              <text class="number">{{ productData?.currentPrice.toFixed(2) }}</text>
+              <!--            <text class="number">非卖品</text>-->
+            </view>
+            <view class="original-price"> ￥{{ productData?.originalPrice.toFixed(2) }}</view>
           </view>
-          <view class="original-price">￥{{ productData?.originalPrice.toFixed(2) }}</view>
+          <view style="color: #d62731">非卖品</view>
         </view>
         <view class="views">
           <text class="iconfont icon-zongliulanliang"></text>
