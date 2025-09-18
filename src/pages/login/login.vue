@@ -7,6 +7,34 @@ import { isVipExpired } from '@/utils/validate.ts'
 
 const userStore = useUserStore()
 
+// 协议开关
+const agree = ref(false)
+
+const onAgreeChange = (e: any) => {
+  console.log('agree', e)
+  // 小程序 checkbox 变更值在 e.detail.value（数组）
+  agree.value = (e?.detail?.value || []).includes('agree')
+  console.log('agree', agree.value)
+}
+
+// 同意协议
+const showAgreementModal = () => {
+  console.log('showAgreementModal', agree.value)
+  uni.showModal({
+    title: '提示',
+    content: '您将使用账号信息登录，并同意《用户协议》《隐私政策》。\n点击“同意”继续。',
+    confirmText: '同意',
+    cancelText: '再看看',
+    confirmColor: '#d62731',
+    success: (res) => {
+      if (res.confirm) agree.value = true
+    },
+    fail: (err) => {
+      console.error('showModal fail:', err)
+    },
+  })
+}
+
 type GetPhoneNumberEvent = {
   detail: {
     code?: string // 用于获取手机号的凭证
@@ -15,7 +43,6 @@ type GetPhoneNumberEvent = {
     encryptedData?: string // 加密数据（已废弃）
   }
 }
-
 // 手机登录
 const handleLogin = (e: GetPhoneNumberEvent) => {
   console.log('handleMobileLogin', e)
@@ -97,16 +124,31 @@ onLoad((options) => {
     <view class="login-area">
       <!-- 用户协议 -->
       <view class="agreement">
-        <checkbox :checked="true"></checkbox>
-        <text class="text">我已阅读并同意</text>
-        <text class="link">《用户协议》</text>
+        <checkbox-group @change="onAgreeChange">
+          <label>
+            <checkbox value="agree" :checked="agree" />
+            <text class="text">我已阅读并同意</text>
+          </label>
+        </checkbox-group>
+        <navigator url="/pages/agreement/user-agreement/user-agreement" open-type="navigate">
+          <text class="link">《用户协议》</text>
+        </navigator>
         <text class="text">及</text>
-        <text class="link">《隐私政策》</text>
+        <navigator url="/pages/agreement/privacy-policy/privacy-policy" open-type="navigate">
+          <text class="link">《隐私政策》</text>
+        </navigator>
       </view>
 
       <!-- 登录按钮 -->
       <view class="login-btn">
-        <button class="btn" type="primary" open-type="getPhoneNumber" @getphonenumber="handleLogin">
+        <button v-if="!agree" class="btn" @tap="showAgreementModal">手机号快捷登录</button>
+        <button
+          v-else
+          class="btn"
+          type="primary"
+          open-type="getPhoneNumber"
+          @getphonenumber="handleLogin"
+        >
           手机号快捷登录
         </button>
       </view>

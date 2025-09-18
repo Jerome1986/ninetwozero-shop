@@ -54,6 +54,7 @@ const handleAgainBuy = async (orderItem: VipOrderItem) => {
     const payRes = await wxPayApi(
       orderNo,
       userStore.profile._id,
+      userStore.profile.mobile,
       orderItem.vipId,
       orderItem.vipLevel,
       orderItem.vipLevelText,
@@ -168,7 +169,7 @@ onLoad(() => vipOrderListGet(userStore.profile._id, 'ALL'))
 
           <view class="price-row">
             <text class="symbol">￥</text>
-            <text class="price">{{ item.amount.toFixed(2) }}</text>
+            <text class="price">{{ Number(item.amount).toFixed(2) }}</text>
           </view>
         </view>
 

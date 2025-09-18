@@ -88,6 +88,7 @@ const totalSelfRevenue = computed(() => {
 
   // 平台佣金
   const platformFee = income * platformRate
+  console.log('平台佣金', platformFee)
 
   // 上下级佣金
   let upstreamFee = 0

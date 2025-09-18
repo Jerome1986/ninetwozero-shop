@@ -6,6 +6,7 @@ import type { WechatPayParams } from '@/types/WechatPay'
  * /wx/pay
  * @param{string} orderNo - 用户用来查询的订单号
  * @param {string} userId - 当前用户id
+ * @param {string} userMoible - 当前用户手机号
  * @param {string} vipId - 当前vip的产品id
  * @param {number} vipLevel - 会员等级
  * @param {string} vipLevelText - 对应会员等级的文本说明
@@ -19,6 +20,7 @@ import type { WechatPayParams } from '@/types/WechatPay'
 export const wxPayApi = (
   orderNo: string,
   userId: string,
+  userMoible: string,
   vipId: string,
   vipLevel: number,
   vipLevelText: string,
@@ -34,6 +36,7 @@ export const wxPayApi = (
     data: {
       orderNo,
       userId,
+      userMoible,
       vipId,
       vipLevel,
       vipLevelText,

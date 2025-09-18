@@ -53,6 +53,7 @@ const buyNow = async () => {
     const payRes = await wxPayApi(
       orderNo,
       userStore.profile._id,
+      userStore.profile.mobile,
       currentVip.value._id,
       currentVip.value.level,
       currentVip.value.levelText,

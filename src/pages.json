@@ -110,6 +110,20 @@
         "navigationBarTitleText": "下属门店",
         "enablePullDownRefresh": false
       }
+    },
+    {
+      "path": "pages/agreement/user-agreement/user-agreement",
+      "style": {
+        "navigationBarTitleText": "用户协议",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/agreement/privacy-policy/privacy-policy",
+      "style": {
+        "navigationBarTitleText": "隐私协议",
+        "enablePullDownRefresh": false
+      }
     }
   ],
   "globalStyle": {

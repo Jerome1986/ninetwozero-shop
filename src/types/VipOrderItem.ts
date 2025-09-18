@@ -11,6 +11,8 @@ export type VipOrderItem = {
   out_trade_no: string
   /** 用户唯一标识（购买该会员的用户） */
   userId: string
+  /** 用户手机号 */
+  userMobile: string
   /** 购买的会员等级 ID，对应 VipItem._id */
   vipId: string
   /** 会员等级 */

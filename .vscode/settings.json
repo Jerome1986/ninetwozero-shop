@@ -1,6 +1,6 @@
 {
   // 设置工作台图标主题为 vscode-icons
-  "workbench.iconTheme": "vscode-icons",
+  "workbench.iconTheme": "material-icon-theme",
   // 在保存时格式化文件
   "editor.formatOnSave": true,
   // 文件格式化配置
