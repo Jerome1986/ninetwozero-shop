@@ -57,7 +57,8 @@ onLoad((options) => {
           <view class="info">
             <view class="proLeft">
               <view class="name">{{ p.name }}</view>
-              <view class="dec">{{ p.description }}</view>
+              <!-- <view class="dec">{{ p.description }}</view> -->
+              <view class="skuName">{{ p.selectSku.name }}</view>
             </view>
             <view class="proRight">
               <view class="price">￥{{ p.unitPrice }}</view>
@@ -212,6 +213,12 @@ onLoad((options) => {
             }
 
             .dec {
+              font-size: 24rpx;
+              color: $jel-font-dec;
+              @include ellipsis(1);
+            }
+
+            .skuName {
               font-size: 24rpx;
               color: $jel-font-dec;
               @include ellipsis(1);

@@ -29,7 +29,7 @@ const orderData = ref<OrderData>({
 const submit = async () => {
   console.log('提交')
   const res = await managerOrderAddApi(orderData.value)
-  if (res.data.insertedId) {
+  if (res.data.insertedId && orderData.value.storeId) {
     const updateFlow = await managerOrderUpdateFlowApi(
       orderData.value.storeId,
       '补货',
@@ -80,7 +80,8 @@ const submit = async () => {
           <view class="info">
             <view class="proLeft">
               <view class="name">{{ p.name }}</view>
-              <view class="dec">{{ p.description }}</view>
+              <!-- <view class="dec">{{ p.description }}</view> -->
+              <view class="skuName">{{ p.selectSku.name }}</view>
             </view>
             <view class="proRight">
               <view class="price">￥{{ p.unitPrice }}</view>
@@ -198,6 +199,11 @@ const submit = async () => {
             }
 
             .dec {
+              font-size: 24rpx;
+              color: $jel-font-dec;
+              @include ellipsis(1);
+            }
+            .skuName {
               font-size: 24rpx;
               color: $jel-font-dec;
               @include ellipsis(1);

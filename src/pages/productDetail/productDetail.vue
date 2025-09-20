@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import type { ProductItem, SkuItem } from '@/types/ProductItem'
 import { productByIdGetApi } from '@/api/product.ts'
 import { onLoad } from '@dcloudio/uni-app'
@@ -16,10 +16,18 @@ const userStore = useUserStore()
 const productData = ref<ProductItem>()
 const productDataGet = async (productId: string, cateType: number) => {
   const res = await productByIdGetApi(productId, cateType)
-  console.log(res)
+  console.log('商品详情', res)
   productData.value = res.data
   activeSkuCover.value = res.data.cover
 }
+
+// 找出当前商品的最低价用于展示，SKU里价格最低的
+const minPrice = computed(() => {
+  if (productData.value && productData.value.skuList && productData.value.skuList.length > 0) {
+    return Math.min(...productData.value.skuList.map((sku) => sku.price))
+  }
+  return 0
+})
 
 // 商品类型--商品  礼品
 const cateType = ref('')
@@ -137,7 +145,9 @@ const handleAddCart = async (val: string) => {
           >
             <view class="price">
               <text class="symbol">￥</text>
-              <text class="number">{{ productData?.currentPrice.toFixed(2) }}</text>
+              <!-- 默认显示最小的价格，如果选择了规格则显示规格价格 -->
+              <text class="number">{{ selectSku ? selectSku.price : minPrice.toFixed(2) }}</text>
+              <text style="font-size: 24rpx" v-if="!selectSku"> 起</text>
             </view>
             <view class="original-price"> ￥{{ productData?.originalPrice.toFixed(2) }}</view>
           </view>
