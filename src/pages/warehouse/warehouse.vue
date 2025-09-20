@@ -14,21 +14,21 @@ const onChecked = (brand: string, model: string, itemId: string, selected: boole
 }
 
 // 减少
-const subProNum = (brand: string, model: string, itemId: string, num: number) => {
+const subProNum = (brand: string, model: string, id: string, skuName: string, num: number) => {
   console.log('subProNum')
   if (num <= 1) {
-    cartStore.removeCartItem(brand, model, itemId)
+    cartStore.removeCartItem(brand, model, id, skuName)
   } else {
-    cartStore.decreaseQuantity(brand, model, itemId)
+    cartStore.decreaseQuantity(brand, model, id, skuName)
   }
 }
 
 // 增加
-const addProNum = (brand: string, model: string, itemId: string, num: number) => {
+const addProNum = (brand: string, model: string, id: string, skuName: string, num: number) => {
   console.log('addProNum')
   if (num >= 99) return
 
-  cartStore.increaseQuantity(brand, model, itemId)
+  cartStore.increaseQuantity(brand, model, id, skuName)
 }
 
 // 提交订单
@@ -79,7 +79,7 @@ const orderSubmit = () => {
                 <image mode="aspectFill" class="picture" :src="p.imageUrl"></image>
                 <view class="meta">
                   <view class="name ellipsis">{{ p.name }}</view>
-                  <view class="attrsText ellipsis">{{ p.description }}</view>
+                  <view class="attrsText ellipsis">{{ p.selectSku.name }}</view>
                 </view>
               </navigator>
 
@@ -88,11 +88,15 @@ const orderSubmit = () => {
                 <view class="price">￥{{ p.unitPrice.toFixed(2) }}</view>
 
                 <view class="numStep">
-                  <text class="text" @tap="subProNum(brand.brand, model.model, p.id, p.quantity)"
+                  <text
+                    class="text"
+                    @tap="subProNum(brand.brand, model.model, p.id, p.selectSku.name, p.quantity)"
                     >-
                   </text>
                   <input class="input" :disabled="true" type="number" :value="String(p.quantity)" />
-                  <text class="text" @tap="addProNum(brand.brand, model.model, p.id, p.quantity)"
+                  <text
+                    class="text"
+                    @tap="addProNum(brand.brand, model.model, p.id, p.selectSku.name, p.quantity)"
                     >+
                   </text>
                 </view>

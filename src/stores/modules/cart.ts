@@ -80,7 +80,9 @@ export const useCartStore = defineStore(
       }
 
       // 查找商品
-      const existingItem = modelGroup.items.find((i) => i.id === newItem.id)
+      const existingItem = modelGroup.items.find(
+        (i) => i.id === newItem.id && i.selectSku.name === newItem.selectSku.name,
+      )
       if (existingItem) {
         // 已存在，数量累加
         existingItem.quantity += newItem.quantity || 1
@@ -88,6 +90,18 @@ export const useCartStore = defineStore(
         // 不存在，添加新商品
         modelGroup.items.push({ ...newItem, quantity: newItem.quantity || 1 })
       }
+
+      // 查找sku是否存在
+      // const skuExists = modelGroup.items.some((i) => i.selectSku?.name === newItem.selectSku?.name)
+      // if (!skuExists) {
+      //   modelGroup.items.push({ ...newItem, quantity: newItem.quantity || 1 })
+      // } else {
+      //   // 已存在，数量累加
+      //   const skuItem = modelGroup.items.find((i) => i.selectSku?.name === newItem.selectSku?.name)
+      //   if (skuItem) {
+      //     skuItem.quantity += newItem.quantity || 1
+      //   }
+      // }
     }
 
     // 清空购物车
@@ -113,7 +127,7 @@ export const useCartStore = defineStore(
     }
 
     // 增加商品数量
-    const increaseQuantity = (brand: string, model: string, itemId: string) => {
+    const increaseQuantity = (brand: string, model: string, itemId: string, skuName: string) => {
       if (!Array.isArray(cartList.value)) {
         cartList.value = []
         return
@@ -125,12 +139,15 @@ export const useCartStore = defineStore(
       const modelGroup = brandGroup.models.find((m) => m.model === model)
       if (!modelGroup) return
 
-      const item = modelGroup.items.find((i) => i.id === itemId)
+      const pro = modelGroup.items.find((i) => i.id === itemId)
+      if (!pro) return
+
+      const item = modelGroup.items.find((i) => i.selectSku?.name === skuName)
       if (item) item.quantity += 1
     }
 
     // 减少商品数量
-    const decreaseQuantity = (brand: string, model: string, itemId: string) => {
+    const decreaseQuantity = (brand: string, model: string, itemId: string, skuName: string) => {
       if (!Array.isArray(cartList.value)) {
         cartList.value = []
         return
@@ -142,12 +159,15 @@ export const useCartStore = defineStore(
       const modelGroup = brandGroup.models.find((m) => m.model === model)
       if (!modelGroup) return
 
-      const item = modelGroup.items.find((i) => i.id === itemId)
+      const pro = modelGroup.items.find((i) => i.id === itemId)
+      if (!pro) return
+
+      const item = modelGroup.items.find((i) => i.selectSku?.name === skuName)
       if (item && item.quantity > 1) item.quantity -= 1
     }
 
     // 删除商品
-    const removeCartItem = (brand: string, model: string, itemId: string) => {
+    const removeCartItem = (brand: string, model: string, itemId: string, skuName: string) => {
       if (!Array.isArray(cartList.value)) {
         cartList.value = []
         return
@@ -159,8 +179,11 @@ export const useCartStore = defineStore(
       const modelGroup = brandGroup.models.find((m) => m.model === model)
       if (!modelGroup) return
 
+      const pro = modelGroup.items.find((i) => i.id === itemId)
+      if (!pro) return
+
       // 移除商品
-      modelGroup.items = modelGroup.items.filter((i) => i.id !== itemId)
+      modelGroup.items = modelGroup.items.filter((i) => i.selectSku?.name !== skuName)
 
       // 如果该型号下没有商品了，移除该型号
       if (modelGroup.items.length === 0) {

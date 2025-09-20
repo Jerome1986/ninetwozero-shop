@@ -4,6 +4,8 @@ export type ProductItem = {
   _id: string
   /** 商品名称 */
   name: string
+  /** 商品货号 */
+  skuNo: string
   /** 商品描述（简要说明） */
   dec: string
   /** 商品原价（未打折前价格，单位：元） */
@@ -24,4 +26,32 @@ export type ProductItem = {
   brand: string
   /** 型号名 */
   model: string
+  /** sku */
+  skuList: SkuItem[]
+}
+
+// 手机膜sku类型
+export type SkuItem = {
+  /** SKU名称 */
+  name: string
+  /** 封面 */
+  cover: string
+  /** 当前SKU对应的价格 */
+  price: number
+  /** 库存 */
+  stock: number
+  /** 文件属性 */
+  skuFileList?: SkuFileItem[]
+}
+
+// 后端上传时的sku文件类型
+export type SkuFileItem = {
+  /** 文件名 */
+  name: string
+  /** 文件上传状态 */
+  status: string
+  /** 文件id */
+  uid: string
+  /** 文件路径 */
+  url: string
 }

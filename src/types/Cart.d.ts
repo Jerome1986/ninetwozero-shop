@@ -1,3 +1,4 @@
+import { SkuItem } from '@/types/ProductItem'
 /** 单个商品 */
 export type CartItem = {
   /** 商品唯一ID */
@@ -14,6 +15,8 @@ export type CartItem = {
   unitPrice: number
   /** 数量 */
   quantity: number
+  /** sku */
+  selectSku: SkuItem
 }
 
 /** 型号购物车 */

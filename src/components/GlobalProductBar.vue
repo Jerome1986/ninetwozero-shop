@@ -47,6 +47,17 @@ const handleItemDetail = async (productId: string) => {
   })
   emits('update:lookNum', updateLook.data.lookNum, productId)
 }
+
+// 类型守卫函数
+function isProductItem(item: ListItem): item is ProductItem {
+  return (item as ProductItem).skuNo !== undefined
+}
+
+// 触底操作
+const handleScrollToLower = () => {
+  console.log('触底了')
+  // 触发父组件加载更多
+}
 </script>
 
 <template>
@@ -55,7 +66,7 @@ const handleItemDetail = async (productId: string) => {
     :show-scrollbar="false"
     :scroll-y="true"
     class="scroll-container"
-    @scrolltolower="$emit('scrolltolower')"
+    @scrolltolower="handleScrollToLower"
   >
     <view class="product-list">
       <!-- 左列 -->
@@ -67,10 +78,10 @@ const handleItemDetail = async (productId: string) => {
           @click="handleItemDetail(item._id)"
         >
           <image class="cover" :src="item.cover" mode="widthFix"></image>
-          <view class="title">{{ item.name }}</view>
+          <view class="title">{{ isProductItem(item) ? item.skuNo : '' }} {{ item.name }}</view>
           <view class="desc">{{ item.dec }}</view>
           <view class="footer">
-            <!--            <view class="price">{{ item.currentPrice }}</view>-->
+            <!-- <view class="price">{{ item.currentPrice }}</view> -->
             <view class="views">
               <text class="iconfont icon-zongliulanliang"></text>
               <text>{{ 'lookView' in item ? item.lookView : item.lookNum }}</text>
@@ -88,7 +99,7 @@ const handleItemDetail = async (productId: string) => {
           @click="handleItemDetail(item._id)"
         >
           <image class="cover" :src="item.cover" mode="widthFix"></image>
-          <view class="title">{{ item.name }}</view>
+          <view class="title">{{ isProductItem(item) ? item.skuNo : '' }} {{ item.name }}</view>
           <view class="desc">{{ item.dec }}</view>
           <view class="footer">
             <!--            <view class="price">{{ item.currentPrice }}</view>-->
