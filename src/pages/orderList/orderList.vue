@@ -51,7 +51,7 @@ const handleOrderDetail = (orderId?: string) => {
 }
 </script>
 <template>
-  <view class="orderList">
+  <scroll-view class="orderList" :scroll-y="true">
     <!--  tab  -->
     <view class="tabList">
       <view
@@ -89,11 +89,13 @@ const handleOrderDetail = (orderId?: string) => {
         <button class="button">去看看</button>
       </navigator>
     </view>
-  </view>
+  </scroll-view>
 </template>
 <style scoped lang="scss">
 .orderList {
-  padding: 24rpx;
+  padding: 24rpx 24rpx 100rpx;
+  width: 100%;
+  height: 100%;
   /*tab*/
   .tabList {
     display: flex;

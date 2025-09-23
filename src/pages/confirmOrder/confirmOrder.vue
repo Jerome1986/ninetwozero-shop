@@ -42,6 +42,7 @@ const submit = async () => {
     })
 
     console.log('流水更新', updateFlow)
+
     // 清空购物车
     cartStore.clearCart()
     // 跳转到首页
