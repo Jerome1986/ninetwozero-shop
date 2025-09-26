@@ -34,4 +34,6 @@ export type UserItem = {
   vipGift: number
   /** 会员折扣 */
   vipDiscount: number
+  /** 邀请码图片链接 */
+  inviterCodeUrl: string
 }

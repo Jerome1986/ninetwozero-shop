@@ -9,7 +9,6 @@ const paramas = ref({
   pageNum: 1,
   pageSize: 100,
 })
-const finish = ref(false)
 // 产品数据
 const products = ref<ProductItem[]>([])
 const getProducts = async (val: string) => {
@@ -30,7 +29,6 @@ const handleClear = () => {
   console.log('清除')
   products.value = []
   paramas.value.pageNum = 1
-  finish.value = false
 }
 
 // 跳转详情

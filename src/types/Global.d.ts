@@ -75,6 +75,15 @@ export type QrCode = {
 }
 
 /**
+ * 生成邀请码返回类型
+ */
+
+export type InviterCode = {
+  /**  返回的二维码base64 */
+  qrCodeUrl: string
+}
+
+/**
  * 流水合计类型  今日 昨日 本周
  */
 export type flowTotal = {

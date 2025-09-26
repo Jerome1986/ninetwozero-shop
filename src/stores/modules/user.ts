@@ -24,6 +24,7 @@ export const useUserStore = defineStore(
       vipEndTime: '', // 会员到期时间
       vipGift: 0,
       vipDiscount: 0,
+      inviterCodeUrl: '',
     })
 
     // 会员信息

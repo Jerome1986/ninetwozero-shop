@@ -4,7 +4,7 @@ import { computed, ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { useUserStore } from '@/stores'
 import { onShareAppMessage } from '@dcloudio/uni-app'
-import { userInviteGetApi } from '@/api/users.ts'
+import { userInviteGetApi, addUserInviterCodeApi } from '@/api/users.ts'
 import type { UserItem } from '@/types/UserItem'
 import { formatTimestamp } from '@/utils/formatTimestamp.ts'
 
@@ -12,6 +12,35 @@ const { safeAreaInsets } = uni.getSystemInfoSync()
 
 // 定义store
 const userStore = useUserStore()
+
+// 点击生成邀请码
+const handleAddCode = () => {
+  console.log('生成邀请码')
+  uni.showModal({
+    title: '提示',
+    content: '点击确定生成你的专属邀请码',
+    showCancel: false,
+    success: async (success) => {
+      if (success.confirm) {
+        // todo 生成邀请码
+        const res = await addUserInviterCodeApi(userStore.profile.referralCode)
+        console.log('生成的邀请码', res)
+        userStore.setProfile({
+          ...userStore.profile,
+          inviterCodeUrl: res.data.qrCodeUrl,
+        })
+      }
+    },
+  })
+}
+
+// 放大并保存二维码
+const handleSaveCode = () => {
+  console.log('保存二维码')
+  uni.previewImage({
+    urls: [userStore.profile.inviterCodeUrl],
+  })
+}
 
 // 一级好友
 const firstFriends = ref<UserItem[]>([])
@@ -64,6 +93,19 @@ onShareAppMessage((res) => {
 </script>
 <template>
   <view class="myFriends">
+    <!-- 邀请码卡片（新增） -->
+    <view class="inviteCard">
+      <view class="row">
+        <view class="title">我的邀请码</view>
+        <view class="code">{{ userStore.profile.referralCode || '—— —— ——' }}</view>
+      </view>
+      <view class="actions" v-if="!userStore.profile.inviterCodeUrl" @click="handleAddCode">
+        <button class="btn primary">生成邀请码</button>
+      </view>
+      <view class="inviterCode" v-else @click="handleSaveCode">
+        <image :src="userStore.profile.inviterCodeUrl" mode="aspectFit" />
+      </view>
+    </view>
     <!-- 头部 -->
     <view class="head" v-if="totalFriends">
       <view class="total">我的好友：{{ totalFriends }}个</view>
@@ -124,6 +166,71 @@ onShareAppMessage((res) => {
 <style scoped lang="scss">
 .myFriends {
   padding: 24rpx;
+
+  /* 新增：邀请码卡片 */
+  .inviteCard {
+    margin-bottom: 16rpx;
+    padding: 16rpx 20rpx;
+    background: #fff;
+    border-radius: 8rpx;
+    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16rpx;
+
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 12rpx;
+
+      .title {
+        font-size: 26rpx;
+        color: $jel-font-dec2;
+      }
+      .code {
+        font-size: 30rpx;
+        color: $jel-font-title;
+        font-weight: 700;
+        letter-spacing: 2rpx;
+      }
+    }
+
+    .actions {
+      display: flex;
+      gap: 12rpx;
+
+      .btn {
+        padding: 12rpx 24rpx;
+        border-radius: 999rpx;
+        font-size: 24rpx;
+        white-space: nowrap;
+      }
+      .ghost {
+        color: $jel-brandColor;
+        background: #fff;
+        border: 1rpx solid $jel-brandColor;
+      }
+      .primary {
+        color: #fff;
+        background: $jel-brandColor;
+      }
+    }
+
+    .inviterCode {
+      width: 120rpx;
+      height: 120rpx;
+      border-radius: 8rpx;
+      overflow: hidden;
+
+      image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+  }
+
   /*头部*/
   .head {
     display: flex;

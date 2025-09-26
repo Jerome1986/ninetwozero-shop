@@ -116,6 +116,7 @@ const handleClearAll = () => {
     margin-right: 24rpx;
     padding: 0 24rpx;
     .left {
+      flex: 1;
       display: flex;
       align-items: center;
       justify-content: space-between;

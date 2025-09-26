@@ -1,6 +1,7 @@
 import { request } from '@/utils/http.ts'
 import type { UserItem } from '@/types/UserItem'
 import type { inviterItem, UpdateResult } from '@/types/Global'
+import type { InviterCode } from '@/types/Global'
 
 /**
  * 根据用户id获取用户信息
@@ -45,6 +46,19 @@ export const userInviteGetApi = (referralCode: string) => {
   return request<inviterItem>({
     method: 'GET',
     url: '/user/inviter',
+    data: { referralCode },
+  })
+}
+
+/**
+ * 生成用户邀请码链接
+ * /qrCode/friends
+ * @param referralCode - 用户自身邀请码
+ */
+export const addUserInviterCodeApi = (referralCode: string) => {
+  return request<InviterCode>({
+    method: 'POST',
+    url: '/qrCode/friends',
     data: { referralCode },
   })
 }
