@@ -1,6 +1,6 @@
 import { request } from '@/utils/http.ts'
 import type { PageResult } from '@/types/Global'
-import type { ProductItem } from '@/types/ProductItem'
+import type { ProductItem, ProductSearchResult } from '@/types/ProductItem'
 
 /**
  * 获取产品列表
@@ -28,5 +28,20 @@ export const productByIdGetApi = (productId: string, cateType: number = 1) => {
     method: 'GET',
     url: '/product/byId',
     data: { productId, cateType },
+  })
+}
+
+/**
+ * 根据货号或商品名搜索
+ * /product/search
+ * @param searchVal - 搜索内容
+ * @param pageNum - 页码
+ * @param pageSize - 每页条数
+ */
+export const productSearchApi = (searchVal: string, pageNum: number, pageSize: number) => {
+  return request<ProductSearchResult>({
+    method: 'POST',
+    url: '/product/search',
+    data: { searchVal, pageNum, pageSize },
   })
 }

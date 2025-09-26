@@ -6,9 +6,11 @@ import { productListGetApi } from '@/api/product.ts'
 import type { ProductItem } from '@/types/ProductItem'
 
 // 获取传递过来的参数
+let typeId = ''
 onLoad(async (options?: AnyObject) => {
   console.log(options?.typeId)
   if (options?.typeId) {
+    typeId = options?.typeId
     await productListGet(options?.typeId)
   }
 })
@@ -20,28 +22,43 @@ const page = ref({
 })
 // 退出分页标记
 const finish = ref(false)
+// 加载中标记，避免并发
+const isLoading = ref(false)
 // 基础列表数据
 const productList = ref<ProductItem[]>([])
 const productListGet = async (typeId: string) => {
-  // 退出分页判断
-  if (finish.value) {
-    return
-  }
-  // 发起请求
+  if (finish.value) return
   const res = await productListGetApi(page.value.pageNum, page.value.pageSize, typeId)
   console.log(res)
-  productList.value.push(...res.data.list)
-  // 如果当前页码小于总页码-当前页码++否则退出分页判断
-  if (page.value.pageNum < res.data.totalPages || res.data.totalPages > 1) {
+
+  const list = res?.data?.list || []
+  if (list.length > 0) {
+    productList.value.push(...list)
+  }
+
+  // 判断是否还有下一页（严格按页码判断）
+  const totalPages = Number(res?.data?.totalPages) || 1
+  if (page.value.pageNum < totalPages) {
     page.value.pageNum++
   } else {
+    finish.value = true
+  }
+
+  // 额外兜底：如果本次返回不足一页或为空，也视为没有更多
+  if (list.length < page.value.pageSize) {
     finish.value = true
   }
 }
 
 // 处理触底操作
-const handleScrolltolower = () => {
-  console.log('触底了')
+const handleScrolltolower = async () => {
+  if (finish.value || isLoading.value) return
+  isLoading.value = true
+  try {
+    await productListGet(typeId)
+  } finally {
+    isLoading.value = false
+  }
 }
 
 /**
@@ -61,7 +78,7 @@ const handleNewLook = (newLook: number, productId: string) => {
   <view class="phoneFilm">
     <GlobalProductBar
       :list="productList"
-      @scrolltolower="handleScrolltolower"
+      @update:load-more="handleScrolltolower"
       :finish="finish"
       :cate-type="1"
       @update:lookNum="handleNewLook"
@@ -72,6 +89,6 @@ const handleNewLook = (newLook: number, productId: string) => {
 <style scoped lang="scss">
 .phoneFilm {
   height: 100%;
-  padding: 24rpx;
+  padding: 24rpx 24rpx 60rpx 24rpx;
 }
 </style>

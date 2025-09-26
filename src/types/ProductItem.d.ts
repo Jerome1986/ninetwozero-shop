@@ -55,3 +55,12 @@ export type SkuFileItem = {
   /** 文件路径 */
   url: string
 }
+
+// 手机膜搜索返回类型
+export type ProductSearchResult = {
+  list: ProductItem[]
+  total: number
+  pageNum: number
+  pageSize: number
+  totalPage: number
+}

@@ -166,7 +166,7 @@ const handleAddCart = async (val: string) => {
     <view class="spec-section" @click="popup?.open()">
       <view class="section-title">选择规格</view>
       <view class="spec-content">
-        <text>{{ selectSku?.name || '已选：默认规格' }}</text>
+        <text>{{ selectSku?.name || '请选择规格' }}</text>
         <text class="iconfont icon-arrow-right"></text>
       </view>
     </view>
@@ -190,11 +190,11 @@ const handleAddCart = async (val: string) => {
         <!-- 图片价格区域 -->
         <view class="skuView">
           <view class="skuCover">
-            <image :src="activeSkuCover" mode="aspectFill" />
+            <image :src="activeSkuCover" mode="aspectFit" />
           </view>
           <view class="skuInfo">
             <!-- 标题 描述 -->
-            <view class="proName">{{ productData?.name }}</view>
+            <view class="proName">{{ productData?.skuNo }} {{ productData?.name }}</view>
             <view class="proDec">{{ productData?.dec }}</view>
             <view class="skuName">{{ activeSkuName }}</view>
             <!-- 价格 -->
@@ -205,7 +205,7 @@ const handleAddCart = async (val: string) => {
           </view>
         </view>
         <!-- SKU选择区域 -->
-        <view class="title">规格</view>
+        <view class="skuTitle">规格</view>
         <view class="skuContent">
           <view
             class="skuItem"
@@ -301,6 +301,9 @@ const handleAddCart = async (val: string) => {
       font-weight: bold;
       color: $jel-font-title;
       margin-bottom: 12rpx;
+      word-break: break-all; // 允许在任何字符换行，适配长型号/斜杠/英文
+      overflow-wrap: anywhere; // 进一步保证可断行
+      @include ellipsis(2); // 最多两行，超出省略
     }
 
     .desc {
@@ -339,9 +342,9 @@ const handleAddCart = async (val: string) => {
   // 商品详情区域
   .detail-section {
     background-color: #fff;
-    padding: 24rpx;
 
     .section-title {
+      padding: 24rpx;
       font-size: 28rpx;
       font-weight: bold;
       color: $jel-font-title;
@@ -363,46 +366,60 @@ const handleAddCart = async (val: string) => {
 
   // 弹窗
   .uniPopup {
+    width: 100%;
+    box-sizing: border-box;
     .skuList {
       position: relative;
       padding: 24rpx;
+      width: 100%;
       height: 60vh;
 
       .skuView {
         display: flex;
+        justify-content: space-between;
         align-items: center;
         gap: 24rpx;
         margin-bottom: 24rpx;
+        width: 100%;
         // sku图片
         .skuCover {
-          width: 200rpx;
-          height: 200rpx;
-          border-radius: 8rpx;
-          overflow: hidden;
+          flex: 0 0 200rpx; // 固定图片列宽，避免挤压
+          image {
+            width: 200rpx;
+            height: 200rpx;
+            border-radius: 8rpx;
+          }
         }
 
         // sku信息
         .skuInfo {
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          height: 200rpx;
+          flex: 1; // 占据剩余空间
+          min-width: 0; // 关键：允许内容在 flex 中收缩
+          overflow: hidden; // 配合多行省略
+          box-sizing: border-box;
           // 标题
           .proName {
-            font-size: 36rpx;
+            max-width: 100%;
             color: $jel-font-title;
+            word-break: break-all; // 允许在任何字符换行，解决斜杠/长英文不换行
+            overflow-wrap: anywhere; // 进一步保证可断行
             @include ellipsis(2);
           }
           // 描述
           .proDec {
-            font-size: 28rpx;
+            font-size: 24rpx;
             color: $jel-font-dec;
+            word-break: break-all;
+            overflow-wrap: anywhere;
             @include ellipsis(1);
           }
           // 规格
           .skuName {
             font-size: 28rpx;
             color: $jel-font-dec2;
+            word-break: break-all;
+            overflow-wrap: anywhere;
+            @include ellipsis(1);
           }
 
           // 价格
@@ -425,10 +442,10 @@ const handleAddCart = async (val: string) => {
         }
       }
       // 规格
-      .title {
-        font-weight: bold;
+      .skuTitle {
+        margin-bottom: 24rpx;
+        font-size: 28rpx;
         color: $jel-font-title;
-        margin-bottom: 16rpx;
       }
       .skuContent {
         display: flex;

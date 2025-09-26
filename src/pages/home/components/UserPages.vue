@@ -5,7 +5,7 @@ import ProductList from '@/components/ProductList.vue'
 import PageSkeleton from '@/pages/home/components/PageSkeleton.vue'
 import TeamStyle from '@/components/TeamStyle.vue'
 
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import type { ProductItem } from '@/types/ProductItem.d.ts'
 import { productListGetApi } from '@/api/product.ts'
 import { onLoad } from '@dcloudio/uni-app'
@@ -34,7 +34,7 @@ const teamListGet = async () => {
 // 骨架屏加载开关
 const isLoading = ref(false)
 // 获取数据后调用
-onLoad(async () => {
+onMounted(async () => {
   isLoading.value = true
   await Promise.all([activityStore.activityListGet(), productListGet(), teamListGet()])
   isLoading.value = false

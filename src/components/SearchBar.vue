@@ -1,70 +1,178 @@
-<script setup lang="ts">
-// 这里不用写逻辑，只提供结构 + 样式
+<script lang="ts" setup>
+import { useHistoryStore } from '@/stores'
+import { ref } from 'vue'
+
+// 定义store
+const historyStore = useHistoryStore()
+
+// 搜索
+const searchValue = ref('')
+// 清除按钮
+const clearBtn = ref(false)
+
+const emits = defineEmits(['search', 'clear'])
+// 点击搜索按钮
+const handleSearch = () => {
+  console.log(searchValue.value)
+  historyStore.setHistoryList(searchValue.value)
+  emits('search', searchValue.value)
+}
+
+// 点击历史搜索
+const handleHistory = (item: string) => {
+  searchValue.value = item
+  emits('search', searchValue.value)
+}
+
+// 聚焦
+const handleFocus = () => {
+  console.log('聚焦')
+  if (searchValue.value) {
+    clearBtn.value = true
+  } else {
+    clearBtn.value = false
+  }
+}
+
+// 输入框改变事件
+const handleIpt = () => {
+  if (searchValue.value) {
+    clearBtn.value = true
+  } else {
+    clearBtn.value = false
+  }
+}
+
+// 处理清除
+const handleClear = () => {
+  searchValue.value = ''
+  clearBtn.value = false
+  emits('clear')
+}
+
+// 清除全部历史记录
+const handleClearAll = () => {
+  historyStore.clearHistory()
+}
 </script>
 
 <template>
-  <view class="search-bar">
-    <view class="search-box">
-      <text class="iconfont icon-sousuo"></text>
-      <input
-        class="search-input"
-        type="text"
-        placeholder="搜索商品、品牌"
-        placeholder-class="placeholder"
-      />
+  <!-- 搜索 -->
+  <view class="search" style="margin-bottom: 24rpx">
+    <view class="searchInput">
+      <view class="left">
+        <text class="iconfont icon-sousuo" style="color: #cccccc; margin-right: 8rpx"></text>
+        <input
+          @input="handleIpt"
+          @focus="handleFocus"
+          type="text"
+          placeholder="请根据货号或商品名称搜索"
+          v-model="searchValue"
+        />
+      </view>
+      <view class="right" v-if="clearBtn" @click="handleClear">
+        <text style="color: #aaaaaa" class="iconfont icon-a-1-Clear"></text>
+      </view>
     </view>
-    <view class="search-btn">搜索</view>
+
+    <view class="searchBtn" @click="handleSearch">搜索</view>
+  </view>
+  <!-- 历史搜索列表 -->
+  <view class="searchHistory" v-if="historyStore.historyList.length > 0">
+    <!-- title -->
+    <view class="title">
+      <text>历史搜索</text>
+      <text class="iconfont icon-shanchu" style="color: #aaaaaa" @click="handleClearAll"></text>
+    </view>
+    <view class="list">
+      <view
+        class="item"
+        v-for="item in historyStore.historyList"
+        :key="item"
+        @click="handleHistory(item)"
+      >
+        {{ item }}
+      </view>
+    </view>
   </view>
 </template>
 
-<style scoped lang="scss">
-.search-bar {
+<style lang="scss" scoped>
+/* 搜索区域 */
+.search {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  padding: 16rpx;
-  background-color: #fff;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
-  border-bottom: 1rpx solid #f5f5f5;
 
-  .search-box {
-    flex: 1;
+  /* 搜索框 */
+  .searchInput {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    background-color: #f8f8f8;
-    border-radius: 50rpx;
-    padding: 0 20rpx;
-    height: 72rpx;
-    border: 2rpx solid #d62731;
-
-    .icon {
-      font-size: 28rpx;
-      margin-right: 12rpx;
-      color: #d62731;
+    flex: 1;
+    height: 64rpx;
+    background-color: #fff;
+    border-radius: 8rpx;
+    margin-right: 24rpx;
+    padding: 0 24rpx;
+    .left {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      input {
+        width: 100%;
+        height: 100%;
+        border: none;
+        outline: none;
+        font-size: 28rpx;
+        &::placeholder {
+          color: #ccc;
+        }
+      }
     }
-
-    .search-input {
-      flex: 1;
-      font-size: 28rpx;
-      color: #333;
-    }
-
-    .placeholder {
-      color: #999;
-      font-size: 28rpx;
+    .right {
     }
   }
 
-  .search-btn {
-    margin-left: 20rpx;
-    padding: 0 32rpx;
-    height: 72rpx;
-    line-height: 72rpx;
-    background-color: #d62731;
-    color: #fff;
-    font-size: 28rpx;
-    border-radius: 50rpx;
+  /* 按钮 */
+  .searchBtn {
     text-align: center;
-    white-space: nowrap;
+    width: 84rpx;
+    height: 64rpx;
+    line-height: 64rpx;
+    font-size: 24rpx;
+    background-color: $jel-brandColor;
+    color: #fff;
+    border-radius: 8rpx;
+  }
+}
+
+/* 搜索历史 */
+.searchHistory {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+  padding: 24rpx;
+  font-size: 28rpx;
+  color: $jel-font-dec2;
+  .title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 28rpx;
+    font-weight: bold;
+    color: $jel-font-dec;
+  }
+  .list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24rpx;
+    .item {
+      padding: 4rpx 16rpx;
+      width: fit-content;
+      border: 1px solid $jel-font-dec;
+      border-radius: 8rpx;
+    }
   }
 }
 </style>

@@ -118,6 +118,13 @@ const handleNewLook = (newLook: number, productId: string) => {
   if (item) item.lookNum = newLook
 }
 
+// 处理搜索
+const handleSearch = () => {
+  uni.navigateTo({
+    url: '/pages/search/search',
+  })
+}
+
 onLoad(async () => {
   await cateListGet()
 })
@@ -125,6 +132,10 @@ onLoad(async () => {
 
 <template>
   <view class="shop">
+    <!-- 搜索 -->
+    <div class="search" style="margin-bottom: 24rpx" @click="handleSearch">
+      <uni-search-bar readonly="true" placeholder="根据商品名称或货号来搜索" bgColor="#EEEEEE" />
+    </div>
     <!--   tab切换   -->
     <NavTab :list="cateList" @cateSelected="handelCate"></NavTab>
     <!--  产品展示  -->

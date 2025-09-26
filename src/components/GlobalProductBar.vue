@@ -37,7 +37,7 @@ watch(
   { deep: true },
 )
 
-const emits = defineEmits(['update:lookNum'])
+const emits = defineEmits(['update:lookNum', 'update:loadMore'])
 // 点击跳转详情
 const handleItemDetail = async (productId: string) => {
   console.log(productId)
@@ -57,6 +57,7 @@ function isProductItem(item: ListItem): item is ProductItem {
 const handleScrollToLower = () => {
   console.log('触底了')
   // 触发父组件加载更多
+  emits('update:loadMore')
 }
 </script>
 
@@ -139,7 +140,7 @@ const handleScrollToLower = () => {
 
   /* 商品项 - 单个商品卡片样式 */
   .item {
-    width: 100%; // 占满列宽
+    width: 347rpx; // 占满列宽
     background-color: #fff; // 白色背景
     border-radius: 8rpx; // 圆角边框
     overflow: hidden; // 超出部分隐藏
@@ -154,11 +155,10 @@ const handleScrollToLower = () => {
 
     /* 商品标题 */
     .title {
+      padding: 16rpx 16rpx 0;
       font-size: 28rpx; // 标题字号
       font-weight: 600; // 加粗
       color: $jel-font-title; // 标题颜色
-      padding: 16rpx; // 内边距
-      line-height: 1.4; // 行高
       @include ellipsis(2); // 超出两行显示省略号
     }
 
@@ -209,12 +209,11 @@ const handleScrollToLower = () => {
     }
   }
 }
-
 /* 加载见底提示 */
 .tips {
-  margin-top: 24rpx; // 上方间距
-  text-align: center; // 文字居中
-  color: $jel-font-dec; // 次要文字颜色
-  font-size: 24rpx; // 文字大小
+  margin-top: 24rpx;
+  text-align: center;
+  color: $jel-font-dec;
+  font-size: 24rpx;
 }
 </style>
