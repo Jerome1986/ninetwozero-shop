@@ -3,6 +3,10 @@ import SearchBar from '@/components/SearchBar.vue'
 import type { ProductItem } from '@/types/ProductItem'
 import { ref } from 'vue'
 import { productSearchApi } from '@/api/product'
+import { useUserStore } from '@/stores'
+
+// 定义store
+const userStore = useUserStore()
 
 // 分页
 const paramas = ref({
@@ -54,9 +58,9 @@ const handleNavigate = (id: string) => {
       >
         <image class="cover" :src="item.cover" mode="widthFix"></image>
         <view class="info">
-          <view class="name">{{ item.name }}</view>
+          <view class="name">{{ item.skuNo }} {{ item.name }}</view>
           <view class="desc">{{ item.dec }}</view>
-          <view class="price-row">
+          <view class="price-row" v-if="userStore.profile.role === 'manager'">
             <view class="current">¥{{ item.currentPrice.toFixed(2) }}</view>
             <view class="original">¥{{ item.originalPrice.toFixed(2) }}</view>
           </view>

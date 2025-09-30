@@ -163,7 +163,7 @@ const handleAddCart = async (val: string) => {
     </view>
 
     <!-- 选择规格 -->
-    <view class="spec-section" @click="popup?.open()">
+    <view class="spec-section" @click="popup?.open()" v-if="userStore.profile.role === 'manager'">
       <view class="section-title">选择规格</view>
       <view class="spec-content">
         <text>{{ selectSku?.name || '请选择规格' }}</text>
