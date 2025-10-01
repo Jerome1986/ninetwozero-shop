@@ -106,12 +106,18 @@ const handleLogin = (e: GetPhoneNumberEvent) => {
 // 获取参数-邀请码
 const inviterCode = ref('')
 onLoad((options: any) => {
-  const scene = decodeURIComponent(options.scene || '')
-  if (scene) {
-    const parts = scene.split('=')
-    inviterCode.value = parts[1] || ''
-    console.log('inviterCode', inviterCode.value)
+  // 二维码邀请
+  if (!options.inviterCode) {
+    const scene = decodeURIComponent(options.scene || '')
+    if (scene) {
+      const parts = scene.split('=')
+      inviterCode.value = parts[1] || ''
+      console.log('inviterCode', inviterCode.value)
+    }
   }
+  console.log(options.inviterCode)
+  // 去分享邀请
+  inviterCode.value = options.inviterCode
 })
 </script>
 
