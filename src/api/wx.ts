@@ -1,5 +1,6 @@
 import { request } from '@/utils/http.ts'
 import type { WechatPayParams } from '@/types/WechatPay'
+import type { VipFreeTimePay } from '@/types/Global'
 
 /**
  * 微信统一下单接口
@@ -52,10 +53,11 @@ export const wxPayApi = (
 /**
  * 门店收款支付-- 直接页面收款/扫码收款
  * /wx/storePay
- * @param {string} code - 用于兑换用户openid的凭证
- * @param {string} storeId - 当前门店的id
- * @param {number} amount - 当前支付的金额
- * @param {string} description - 当前产品/服务的描述
+ * @param  code - 用于兑换用户openid的凭证
+ * @param  storeId - 当前门店的id
+ * @param  amount - 当前支付的金额
+ * @param  description - 当前产品/服务的描述
+ * @param wxid - openid
  */
 
 export const wxStorePayApi = (
@@ -63,10 +65,25 @@ export const wxStorePayApi = (
   storeId: string,
   amount: string,
   description: string,
+  wxid: string = '',
 ) => {
   return request<WechatPayParams>({
     method: 'POST',
     url: '/wx/storePay',
-    data: { code, storeId, amount, description },
+    data: { code, storeId, amount, description, wxid },
+  })
+}
+
+/**
+ * 门店收款--会员免费次数
+ * @param openid  - 会员的openid
+ * @param storeId - 门店id
+ * @param amount - 当前订单金额
+ */
+export const wxStoreVipFreePayApi = (openid: string, storeId: string, amount: number | string) => {
+  return request<VipFreeTimePay>({
+    method: 'POST',
+    url: '/wx/vipFreeTime',
+    data: { openid, storeId, amount },
   })
 }

@@ -102,3 +102,13 @@ export type CheckStoreParentResult = {
   /** 上级的上级的门店id */
   secondStoreId: string | null
 }
+
+/**
+ * 会员次数抵扣支付
+ */
+export type VipFreeTimePay = {
+  /** 订单号 */
+  outTradeNo: string
+  /** 剩余次数 */
+  remain: number
+}

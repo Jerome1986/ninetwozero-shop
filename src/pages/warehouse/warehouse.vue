@@ -85,7 +85,7 @@ const orderSubmit = () => {
 
               <!-- 商品数量 -->
               <view class="count">
-                <view class="price">￥{{ p.unitPrice.toFixed(2) }}</view>
+                <view class="price">￥{{ p.selectSku.price.toFixed(2) }}</view>
 
                 <view class="numStep">
                   <text

@@ -208,7 +208,7 @@ export const useCartStore = defineStore(
               brandSum +
               modelGroup.items
                 .filter((item) => item.selected)
-                .reduce((sum, item) => sum + item.unitPrice * item.quantity, 0)
+                .reduce((sum, item) => sum + item.selectSku.price * item.quantity, 0)
             )
           }, 0)
         )

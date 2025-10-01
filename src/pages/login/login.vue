@@ -73,7 +73,7 @@ const handleLogin = (e: GetPhoneNumberEvent) => {
             console.log('会员已过期')
           }
 
-          userStore.setProfile(newData)
+          userStore.setProfile(wxRes.data)
 
           await uni.showToast({
             icon: 'success',
@@ -105,10 +105,12 @@ const handleLogin = (e: GetPhoneNumberEvent) => {
 
 // 获取参数-邀请码
 const inviterCode = ref('')
-onLoad((options) => {
-  console.log(options?.inviterCode)
-  if (options) {
-    inviterCode.value = options.inviterCode
+onLoad((options: any) => {
+  const scene = decodeURIComponent(options.scene || '')
+  if (scene) {
+    const parts = scene.split('=')
+    inviterCode.value = parts[1] || ''
+    console.log('inviterCode', inviterCode.value)
   }
 })
 </script>

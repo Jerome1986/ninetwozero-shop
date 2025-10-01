@@ -1,7 +1,23 @@
 <script lang="ts" setup>
 import { ref, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
-import { wxStorePayApi } from '@/api/wx.ts'
+import { wxStorePayApi, wxStoreVipFreePayApi } from '@/api/wx.ts'
+import { useUserStore } from '@/stores'
+
+// 定义store
+const userStore = useUserStore()
+
+/**
+ * 封装uni.login,封装成异步返回，可以等待code返回后赋值，再开始发起支付请i去
+ */
+function getWxCode(): Promise<string> {
+  return new Promise((resolve, reject) => {
+    uni.login({
+      success: (res) => resolve(res.code),
+      fail: reject,
+    })
+  })
+}
 
 // 安全距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
@@ -14,16 +30,46 @@ const code = ref<string>('')
 // 实时显示本次支付金额
 const displayAmount = computed(() => amount.value || '0.00')
 
-// 点击支付
+// 处理支付
 const handlePay = async () => {
   if (!amount.value) {
     await uni.showToast({ title: '请输入金额', icon: 'none' })
     return
   }
-  // 1.向后端发起支付请求
-  const payRes = await wxStorePayApi(code.value, storeId.value, amount.value, '贴膜')
-  console.log('payRes:', payRes)
-  // 2.通过后端返回参数、发起前端微信支付
+
+  // 检测用户是否登录
+  if (!userStore.profile._id) {
+    console.log('未登录')
+    code.value = await getWxCode()
+    console.log('凭证', code.value)
+    return doPay(code.value) // 未登录用户直接走支付
+  }
+
+  console.log('已登录')
+
+  // 已登录的情况下：判断会员免费次数
+  if (userStore.profile.vipGift > 0) {
+    console.log('会员免费通道开启')
+    await useVipGift() // 直接调用消耗会员次数的接口
+    await uni.showToast({ icon: 'success', title: '抵扣成功' })
+    return redirectToMyPage()
+  }
+
+  // 没有会员次数 -> 走支付
+  const codeVal = code.value || (await getWxCode())
+  return doPay(codeVal)
+}
+
+// 单独封装支付逻辑
+const doPay = async (code: string) => {
+  const payRes = await wxStorePayApi(
+    code,
+    storeId.value,
+    amount.value,
+    '贴膜',
+    userStore.profile.openid,
+  )
+
   wx.requestPayment({
     timeStamp: payRes.data.timeStamp,
     nonceStr: payRes.data.nonceStr,
@@ -31,24 +77,31 @@ const handlePay = async () => {
     signType: payRes.data.signType,
     paySign: payRes.data.paySign,
     async success(res) {
-      // 3.支付成功后-跳转页面
       console.log('支付成功', res)
       await uni.showToast({ icon: 'success', title: '支付成功' })
-      // todo 重新获取支付成功后的订单 跳转到订单详情页 传订单号过去
-      setTimeout(() => {
-        uni.switchTab({
-          url: '/pages/my/my',
-        })
-      }, 800)
+      redirectToMyPage()
     },
     fail(err) {
       console.error('支付失败', err)
-      uni.showToast({
-        icon: 'none',
-        title: '取消支付',
-      })
+      uni.showToast({ icon: 'none', title: '取消支付' })
     },
   })
+}
+
+// 跳转封装
+const redirectToMyPage = () => {
+  setTimeout(() => {
+    uni.switchTab({ url: '/pages/my/my' })
+  }, 800)
+}
+
+// 会员次数接口封装
+const useVipGift = async () => {
+  // 调用后端接口扣减次数
+  const res = await wxStoreVipFreePayApi(userStore.profile.openid!, storeId.value, amount.value)
+  console.log(res)
+  // 同步本地的会员次数
+  userStore.setProfile({ vipGift: res.data.remain })
 }
 
 // 通过二维码传过来的门店id
@@ -61,13 +114,6 @@ onLoad((options: any) => {
     storeId.value = parts[1] || ''
   }
   console.log('storeId:', storeId)
-  // 获取用户 code
-  uni.login({
-    success: async (res) => {
-      console.log('uni.login:', res)
-      code.value = res.code
-    },
-  })
 })
 </script>
 
