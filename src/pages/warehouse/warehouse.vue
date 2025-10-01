@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import User from '@/pages/warehouse/components/User.vue'
-//定义store
 import { useCartStore, useUserStore } from '@/stores'
+
+const { safeAreaInsets } = uni.getSystemInfoSync()
 
 // 定义store
 const userStore = useUserStore()
@@ -14,21 +15,21 @@ const onChecked = (brand: string, model: string, itemId: string, selected: boole
 }
 
 // 减少
-const subProNum = (brand: string, model: string, id: string, skuName: string, num: number) => {
-  console.log('subProNum')
+const subProNum = (brand: string, model: string, id: string, skuId: string, num: number) => {
+  console.log('subProNum', brand, model, id, skuId, num)
   if (num <= 1) {
-    cartStore.removeCartItem(brand, model, id, skuName)
+    cartStore.removeCartItem(brand, model, id, skuId)
   } else {
-    cartStore.decreaseQuantity(brand, model, id, skuName)
+    cartStore.decreaseQuantity(brand, model, id, skuId)
   }
 }
 
 // 增加
-const addProNum = (brand: string, model: string, id: string, skuName: string, num: number) => {
+const addProNum = (brand: string, model: string, id: string, skuId: string, num: number) => {
   console.log('addProNum')
   if (num >= 99) return
 
-  cartStore.increaseQuantity(brand, model, id, skuName)
+  cartStore.increaseQuantity(brand, model, id, skuId)
 }
 
 // 提交订单
@@ -42,8 +43,9 @@ const orderSubmit = () => {
 <template>
   <!--  用户端--对应员工招聘跳转  -->
   <User v-if="userStore.profile.role !== 'manager'"></User>
-  <!--  店长--对应购物车功能进货  -->
-  <view class="manager" v-else>
+
+  <!--  店长--对应购物车功能进货   -->
+  <view class="manager" v-else :style="{ paddingBottom: safeAreaInsets?.bottom + 'px' }">
     <scroll-view class="cartList" :scroll-y="true" v-if="cartStore.cartList.length > 0">
       <!-- 品牌分组 -->
       <view class="brand-group" v-for="brand in cartStore.cartList" :key="brand.brand">
@@ -90,13 +92,13 @@ const orderSubmit = () => {
                 <view class="numStep">
                   <text
                     class="text"
-                    @tap="subProNum(brand.brand, model.model, p.id, p.selectSku.name, p.quantity)"
+                    @tap="subProNum(brand.brand, model.model, p.id, p.selectSku.skuId, p.quantity)"
                     >-
                   </text>
                   <input class="input" :disabled="true" type="number" :value="String(p.quantity)" />
                   <text
                     class="text"
-                    @tap="addProNum(brand.brand, model.model, p.id, p.selectSku.name, p.quantity)"
+                    @tap="addProNum(brand.brand, model.model, p.id, p.selectSku.skuId, p.quantity)"
                     >+
                   </text>
                 </view>
@@ -105,19 +107,17 @@ const orderSubmit = () => {
           </view>
         </view>
       </view>
-
-      <!-- 吸底工具栏 -->
-      <view class="toolbar" v-if="cartStore.cartTotal">
-        <text class="text">合计:</text>
-        <text class="amount">{{ cartStore.cartTotal.toFixed(2) }}</text>
-        <view class="button-group">
-          <view @click="orderSubmit" class="button payment-button"> 提交订单</view>
-        </view>
-      </view>
-
-      <!-- 底部占位 -->
-      <view class="toolbar-height"></view>
     </scroll-view>
+    <!-- 吸底工具栏 -->
+    <view class="toolbar" v-if="cartStore.cartTotal">
+      <view class="leftTotal">
+        <text class="text">合计：</text>
+        <text class="amount">{{ cartStore.cartTotal.toFixed(2) }}</text>
+      </view>
+      <view class="button-group">
+        <view @click="orderSubmit" class="button payment-button"> 提交订单</view>
+      </view>
+    </view>
 
     <!-- 购物车空状态 -->
     <view class="cart-blank" v-else>
@@ -137,6 +137,7 @@ const orderSubmit = () => {
 
   .cartList {
     height: 100%;
+    padding-bottom: 144rpx;
 
     /* 品牌标题 */
     .brand-title {
@@ -191,9 +192,7 @@ const orderSubmit = () => {
 
       /*产品*/
       .proItem {
-        margin: 24rpx 0;
-        padding: 20rpx;
-        border: 1px solid $jel-border;
+        margin: 16rpx 0;
         border-radius: 12rpx;
 
         &:nth-last-child(1) {
@@ -201,8 +200,10 @@ const orderSubmit = () => {
         }
 
         .goods {
+          padding: 24rpx;
           display: flex;
           align-items: center;
+          width: 100%;
           position: relative;
 
           .checkbox {
@@ -255,6 +256,8 @@ const orderSubmit = () => {
                 font-size: 28rpx;
                 font-weight: 600;
                 color: #333;
+                word-break: break-all; // 允许在任何字符换行，适配长型号/斜杠/英文
+                overflow-wrap: anywhere; // 进一步保证可断行
                 @include ellipsis(1);
               }
 
@@ -285,15 +288,15 @@ const orderSubmit = () => {
             .numStep {
               display: flex;
               align-items: center;
-              margin-left: 20rpx;
 
               .text {
-                width: 50rpx;
-                height: 40rpx;
+                width: 70rpx;
+                height: 60rpx;
+                line-height: 60rpx;
                 text-align: center;
-                background-color: #f0f0f0;
-                font-size: 30rpx;
-                color: #333;
+                background-color: $jel-border;
+                border-radius: 8rpx;
+                color: $jel-font-title;
               }
 
               .input {
@@ -307,71 +310,47 @@ const orderSubmit = () => {
         }
       }
     }
+  }
 
-    // 吸底工具栏
-    .toolbar {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: var(--window-bottom);
-      z-index: 99;
-
-      height: 100rpx;
-      padding: 0 20rpx;
+  // 吸底工具栏
+  .toolbar {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 16rpx 24rpx 24rpx;
+    width: 100%;
+    z-index: 999;
+    background-color: #fff;
+    border-top: 1px solid $jel-border;
+    border-bottom: 1px solid $jel-border;
+    // 左边合计
+    .leftTotal {
       display: flex;
       align-items: center;
-      border-top: 1rpx solid #ededed;
-      background-color: #fff;
 
       .text {
-        margin-right: 8rpx;
-        margin-left: 32rpx;
-        color: #444;
-        font-size: 14px;
+        height: 60rpx;
+        font-size: 32rpx; /* 即便大小不同也能对齐底线 */
+        color: $jel-font-title;
       }
 
       .amount {
-        font-size: 40rpx;
+        height: 60rpx;
+        font-size: 36rpx;
+        font-weight: bold;
         color: $jel-brandColor;
-
-        .decimal {
-          font-size: 24rpx;
-        }
-
-        &::before {
-          content: '￥';
-          font-size: 24rpx;
-        }
-      }
-
-      .button-group {
-        margin-left: auto;
-        display: flex;
-        justify-content: space-between;
-        text-align: center;
-        line-height: 72rpx;
-        font-size: 24rpx;
-        color: #fff;
-
-        .button {
-          width: 240rpx;
-          margin: 0 10rpx;
-          border-radius: 72rpx;
-        }
-
-        .payment-button {
-          background-color: $jel-brandColor;
-
-          &.disabled {
-            opacity: 0.6;
-          }
-        }
       }
     }
 
-    // 底部占位空盒子
-    .toolbar-height {
-      height: 100rpx;
+    //  右边提交按钮
+    .button-group {
+      padding: 16rpx 30rpx;
+      background-color: $jel-brandColor;
+      color: #ffffff;
+      border-radius: 40rpx;
     }
   }
 

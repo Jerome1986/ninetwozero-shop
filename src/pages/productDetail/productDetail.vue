@@ -6,6 +6,8 @@ import { onLoad } from '@dcloudio/uni-app'
 import FooterBar from '@/pages/productDetail/components/FooterBar.vue'
 import { useCartStore, useUserStore } from '@/stores'
 
+const { safeAreaInsets } = uni.getSystemInfoSync()
+
 const popup = ref<any>()
 
 // 定义store
@@ -186,7 +188,7 @@ const handleAddCart = async (val: string) => {
 
     <!--  sku弹窗 样式  -->
     <uni-popup class="uniPopup" ref="popup" type="bottom" background-color="#fff">
-      <view class="skuList">
+      <view class="skuList" :style="{ paddingBottom: safeAreaInsets?.bottom + 'px' }">
         <!-- 图片价格区域 -->
         <view class="skuView">
           <view class="skuCover">
@@ -227,14 +229,17 @@ const handleAddCart = async (val: string) => {
       @addCart="handleAddCart('addCart')"
       @nowAdd="handleAddCart('nowAdd')"
     ></FooterBar>
+    <!--  占位  -->
+    <view
+      :style="{ paddingBottom: safeAreaInsets?.bottom + 'px' }"
+      style="width: 100%; height: 170rpx"
+    ></view>
   </scroll-view>
 </template>
 
 <style scoped lang="scss">
 .product-detail {
-  min-height: 100vh;
-  padding-bottom: 120rpx;
-
+  height: 100%;
   // 轮播图
   .swiper {
     width: 100%;
@@ -368,11 +373,11 @@ const handleAddCart = async (val: string) => {
   .uniPopup {
     width: 100%;
     box-sizing: border-box;
+
     .skuList {
-      position: relative;
       padding: 24rpx;
       width: 100%;
-      height: 60vh;
+      height: 50vh;
 
       .skuView {
         display: flex;
@@ -405,6 +410,7 @@ const handleAddCart = async (val: string) => {
             overflow-wrap: anywhere; // 进一步保证可断行
             @include ellipsis(2);
           }
+
           // 描述
           .proDec {
             font-size: 24rpx;
@@ -413,6 +419,7 @@ const handleAddCart = async (val: string) => {
             overflow-wrap: anywhere;
             @include ellipsis(1);
           }
+
           // 规格
           .skuName {
             font-size: 28rpx;
@@ -441,12 +448,14 @@ const handleAddCart = async (val: string) => {
           }
         }
       }
+
       // 规格
       .skuTitle {
         margin-bottom: 24rpx;
         font-size: 28rpx;
         color: $jel-font-title;
       }
+
       .skuContent {
         display: flex;
         flex-wrap: wrap;
@@ -454,12 +463,14 @@ const handleAddCart = async (val: string) => {
         // SKU每一项
         .skuItem {
           padding: 8rpx 16rpx;
-          width: fit-content;
+          display: inline-block;
+          width: auto;
           font-size: 28rpx;
           color: $jel-font-title;
           background-color: #f5f5f5;
           border-radius: 8rpx;
         }
+
         // SKU每一项-选中状态
         .activeSku {
           color: $jel-brandColor;
@@ -468,20 +479,18 @@ const handleAddCart = async (val: string) => {
           background-color: rgba(255, 242, 237);
         }
       }
-    }
-    // 确定按钮
-    .confrim {
-      position: absolute;
-      bottom: 24rpx;
-      left: 24rpx;
-      right: 24rpx;
-      height: 80rpx;
-      line-height: 80rpx;
-      text-align: center;
-      background-color: $jel-brandColor;
-      color: #fff;
-      font-size: 32rpx;
-      border-radius: 100rpx;
+
+      // 确定按钮
+      .confrim {
+        margin-top: 100rpx;
+        height: 80rpx;
+        line-height: 80rpx;
+        text-align: center;
+        background-color: $jel-brandColor;
+        color: #fff;
+        font-size: 32rpx;
+        border-radius: 100rpx;
+      }
     }
   }
 }

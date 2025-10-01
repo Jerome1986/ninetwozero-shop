@@ -46,7 +46,7 @@ const handleWant = () => {
     <view class="icons">
       <button class="icons-button" open-type="contact">
         <text style="font-size: 40rpx" class="iconfont icon-kefu"></text>
-        客服
+        <text class="label">客服</text>
       </button>
       <navigator class="icons-button" url="/pages/warehouse/warehouse" open-type="switchTab">
         <text style="font-size: 40rpx" class="iconfont icon-a-ziyuan1"></text>
@@ -54,7 +54,7 @@ const handleWant = () => {
         <text class="cratNum" v-if="cartStore.cartCount > 0">
           {{ cartStore.cartCount }}
         </text>
-        仓库
+        <text class="label">仓库</text>
       </navigator>
     </view>
     <view class="buttons">
@@ -75,86 +75,75 @@ const handleWant = () => {
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 1;
+  z-index: 999;
+  height: 170rpx;
   background-color: #fff;
-  height: 100rpx;
-  padding: 0 20rpx var(--window-bottom);
-  border-top: 1rpx solid #eaeaea;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  box-sizing: content-box;
-
-  .btn {
-    width: 100%;
-    background-color: $jel-brandColor;
-    color: #fff;
-    border-radius: 40rpx;
-    font-size: 28rpx;
-  }
-
-  .buttons {
-    display: flex;
-
-    & > view {
-      width: 220rpx;
-      text-align: center;
-      line-height: 72rpx;
-      font-size: 26rpx;
-      color: #fff;
-      border-radius: 72rpx;
-    }
-
-    .addcart {
-      background-color: #1a2251;
-    }
-
-    .buynow,
-    .payment {
-      background-color: $jel-brandColor;
-      margin-left: 20rpx;
-    }
-  }
-
+  align-items: start;
+  box-sizing: border-box;
+  border-top: 1px solid $jel-border;
+  /** 左侧按钮 */
   .icons {
-    padding-right: 10rpx;
     display: flex;
     align-items: center;
-    flex: 1;
+    height: 100rpx;
 
+    /** 左侧功能按钮 */
     .icons-button {
       position: relative;
-      flex: 1;
-      text-align: center;
-      line-height: 1.4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8rpx;
+      background-color: rgba(0, 0, 0, 0);
+      font-size: 28rpx;
+      width: 160rpx;
+      height: 100%;
+      border-radius: 8rpx;
+      margin-right: 8rpx;
       padding: 0;
-      margin: 0;
-      border-radius: 0;
-      font-size: 20rpx;
-      color: $jel-font-title;
-      background-color: #fff;
+      box-sizing: border-box;
 
-      &::after {
-        border: none;
-      }
-
+      /** 购物车右上角角标 */
       .cratNum {
         position: absolute;
+        left: 50rpx;
+        top: 10rpx;
         width: 30rpx;
         height: 30rpx;
         line-height: 30rpx;
-        top: -10rpx;
-        right: 10rpx;
-        font-size: 24rpx;
-        color: white;
-        background-color: $jel-brandColor;
+        text-align: center;
         border-radius: 50%;
+        font-size: 24rpx;
+        background-color: $jel-brandColor;
+        color: #fff;
       }
     }
+  }
 
-    text {
-      display: block;
-      font-size: 34rpx;
+  /** 右侧加入库存 */
+  .buttons {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16rpx;
+    height: 100rpx;
+    font-size: 28rpx;
+
+    .addcart {
+      padding: 18rpx 40rpx;
+      background-color: #1a2251;
+      color: #fff;
+      border-radius: 38rpx;
+    }
+
+    .buynow {
+      padding: 18rpx 40rpx;
+      background-color: $jel-brandColor;
+      color: #fff;
+      border-radius: 38rpx;
     }
   }
 }

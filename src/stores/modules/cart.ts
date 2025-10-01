@@ -127,7 +127,7 @@ export const useCartStore = defineStore(
     }
 
     // 增加商品数量
-    const increaseQuantity = (brand: string, model: string, itemId: string, skuName: string) => {
+    const increaseQuantity = (brand: string, model: string, itemId: string, skuId: string) => {
       if (!Array.isArray(cartList.value)) {
         cartList.value = []
         return
@@ -142,12 +142,12 @@ export const useCartStore = defineStore(
       const pro = modelGroup.items.find((i) => i.id === itemId)
       if (!pro) return
 
-      const item = modelGroup.items.find((i) => i.selectSku?.name === skuName)
+      const item = modelGroup.items.find((i) => i.selectSku?.skuId === skuId)
       if (item) item.quantity += 1
     }
 
     // 减少商品数量
-    const decreaseQuantity = (brand: string, model: string, itemId: string, skuName: string) => {
+    const decreaseQuantity = (brand: string, model: string, itemId: string, skuId: string) => {
       if (!Array.isArray(cartList.value)) {
         cartList.value = []
         return
@@ -162,12 +162,12 @@ export const useCartStore = defineStore(
       const pro = modelGroup.items.find((i) => i.id === itemId)
       if (!pro) return
 
-      const item = modelGroup.items.find((i) => i.selectSku?.name === skuName)
+      const item = modelGroup.items.find((i) => i.selectSku?.skuId === skuId)
       if (item && item.quantity > 1) item.quantity -= 1
     }
 
     // 删除商品
-    const removeCartItem = (brand: string, model: string, itemId: string, skuName: string) => {
+    const removeCartItem = (brand: string, model: string, itemId: string, skuId: string) => {
       if (!Array.isArray(cartList.value)) {
         cartList.value = []
         return
@@ -183,7 +183,7 @@ export const useCartStore = defineStore(
       if (!pro) return
 
       // 移除商品
-      modelGroup.items = modelGroup.items.filter((i) => i.selectSku?.name !== skuName)
+      modelGroup.items = modelGroup.items.filter((i) => i.selectSku?.skuId !== skuId)
 
       // 如果该型号下没有商品了，移除该型号
       if (modelGroup.items.length === 0) {

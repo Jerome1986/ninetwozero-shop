@@ -32,6 +32,8 @@ export type ProductItem = {
 
 // 手机膜sku类型
 export type SkuItem = {
+  /** skuId */
+  skuId: string
   /** SKU名称 */
   name: string
   /** 封面 */
